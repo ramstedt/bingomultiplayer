@@ -1,0 +1,38 @@
+.bingoCard {
+  display: grid;
+  grid-template-columns: repeat(5, 100px);
+  grid-template-rows: repeat(5, 100px);
+  gap: 5px;
+  padding: 10px;
+  background-color: #fff;
+  border: 2px solid #333;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #000;
+  background-color: #ddd;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cell:hover {
+  background-color: #bbb;
+}
+
+.marked {
+  background-color: #4caf50;
+  color: white;
+}
+.status {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #4caf50;
+}
