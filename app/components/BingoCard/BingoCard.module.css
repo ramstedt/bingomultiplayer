@@ -1,25 +1,33 @@
 .bingoCard {
   display: grid;
-  grid-template-columns: repeat(5, 100px);
-  grid-template-rows: repeat(5, 100px);
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
   gap: 5px;
-  padding: 10px;
   background-color: #fff;
-  border: 2px solid #333;
   margin: 0 auto;
-  width: fit-content;
+  width: 95vw;
+  height: 95vw;
+  max-width: 500px;
+  max-height: 500px;
 }
 
 .cell {
+  padding: 1px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 2px solid #000;
   background-color: #ddd;
-  font-size: 24px;
+  font-size: calc(3vw);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+@media (min-width: 500px) {
+  .bingoCard div {
+    font-size: 20px;
+  }
 }
 
 .cell:hover {
