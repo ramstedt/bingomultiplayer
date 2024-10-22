@@ -44,6 +44,7 @@ export default function Home() {
       {playerData ? (
         <div>
           <p>Name: {playerData.name}</p>
+          <BingoCard cellContent={playerData.bingocard}/>
         </div>
       ) : (
         <p>No player found.</p>

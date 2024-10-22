@@ -2,55 +2,19 @@
 import { useState, useEffect } from 'react';
 import styles from './BingoCard.module.css';
 
-const BingoCard = () => {
-  const cellContent = [
-    'The quick brown',
-    'A journey',
-    'To be or',
-    'All that glitters',
-    'I think, therefore I am.',
-    'The only thing we have ',
-    'In the end,.',
-    'Life is what',
-    'It does not matter',
-    'You miss 100% of the',
-    'That which does not',
-    'The greatest glory',
-    'The future belongs.',
-    'Happiness is not',
-    'The purpose of our',
-    'Get busy living',
-    'You only live once.',
-    'The best way to',
-    'Do not wait to.',
-    'What we think,',
-    'Get busy living',
-    'You only live once.',
-    'The best way to',
-    'Do not wait to.',
-    'What we think,',
-  ];
-
-  const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  };
+const BingoCard = ({ cellContent }) => {
 
   const initialGrid = Array(5)
     .fill(null)
     .map(() => Array(5).fill(false));
   const [grid, setGrid] = useState(initialGrid);
-  const [cellContentShuffled, setCellContentShuffled] = useState([]);
   const [bingoStatus, setBingoStatus] = useState('');
 
   useEffect(() => {
-    const shuffledcellContent = shuffleArray([...cellContent]);
-    setCellContentShuffled(shuffledcellContent);
+    const cellContentArray = Object.values(cellContent);
 
-    // Create the Bingo grid
+    cellContentArray.splice(12, 0, "");
+
     const newGrid = Array(5)
       .fill(null)
       .map((_, rowIndex) =>
@@ -59,12 +23,12 @@ const BingoCard = () => {
           .map((_, colIndex) =>
             rowIndex === 2 && colIndex === 2
               ? 'Free'
-              : shuffledcellContent[rowIndex * 5 + colIndex]
+              : cellContentArray[rowIndex * 5 + colIndex]
           )
       );
 
     setGrid(newGrid);
-  }, []);
+  }, [cellContent]);
 
   const checkBingo = (grid) => {
     for (let row of grid) {
