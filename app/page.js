@@ -1,66 +1,30 @@
-'use client'
-import styles from './page.module.css';
+'use client';
 import BingoCard from './components/BingoCard/BingoCard';
 import { useState, useEffect } from 'react';
 import { db } from '@/firebase.config';
 import { ref, child, get } from 'firebase/database';
-
+import LinkButton from './components/_atoms/LinkButton/LinkButton';
 
 export default function Home() {
-/*   const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const dbRef = ref(db);
-    const listener = onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      setData(data);
-    });
-  
-    return () => listener(); 
-  }, []); */
-
-  const [playerData, setPlayerData] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('playerId1');
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const snapshot = await get(child(ref(db), `players/${searchQuery}`));
-        if (snapshot.exists()) {
-          setPlayerData(snapshot.val());
-        } else {
-          setPlayerData(null);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
-    <div>
-      {playerData ? (
-        <div>
-          <p>Name: {playerData.name}</p>
-          <BingoCard cellContent={playerData.bingocard}/>
-        </div>
-      ) : (
-        <p>No player found.</p>
-      )}
-    </div>
+    <>
+      <h1>MultiPlayer Bingo </h1>
+      <h3>Created by Catface</h3>
+      <br />
+      <LinkButton text='Create a game' href='/' />
+      <br />
+      or
+      <br />
+      <br />
+      <LinkButton text='Join a game' href='/' />
+      <div className='margin'>
+        <br />
+        <h2>How to play</h2>
+        Join a game by entering the code that was shared to you. You will
+        receive a bingo card with boxes in a randomised order. The boxes contain
+        texts that the player has created. Fill in your bingo card as you play.
+        Once you have a bingo you can announce it to everyone!
+      </div>
+    </>
   );
-};
-
-
-
-
-{/*       {Object.entries(data).map(([key, value]) => (
-        <div key={key}>
-          {value.playerId1 && value.playerId1.name}
-
-        </div>
-      ))} */}
-
-
+}
