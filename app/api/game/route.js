@@ -1,32 +1,44 @@
 import { db } from '@/firebase.config';
-import { ref, get } from 'firebase/database';
+import { ref, get, child } from 'firebase/database';
 
-const getGameData = async (gameId) => {
+const getPlayerAndGamePlayers = async (gameId, playerId) => {
   try {
-    const gameRef = ref(db, `Games/${gameId}`);
-    const gameSnapshot = await get(gameRef);
+    const playerRef = ref(db, `Players/${playerId}`);
+    const playerSnapshot = await get(playerRef);
 
-    if (!gameSnapshot.exists()) {
-      console.log('No game found with that ID.');
-      return { error: 'Game not found' };
+    if (!playerSnapshot.exists()) {
+      return { error: 'Player not found' };
     }
 
-    const playersRef = ref(db, `Players`);
+    const currentPlayer = playerSnapshot.val();
+
+    if (currentPlayer.gameId !== gameId) {
+      return { error: 'This player and game combo does not exist' };
+    }
+
+    const playersRef = ref(db, 'Players');
     const playersSnapshot = await get(playersRef);
 
-    const players = [];
-    playersSnapshot.forEach((childSnapshot) => {
-      const playerData = childSnapshot.val();
-      const playerId = childSnapshot.key;
-      if (playerData.gameId === gameId) {
-        players.push({ playerId, ...playerData });
-      }
-    });
+    const allPlayers = [];
+    if (playersSnapshot.exists()) {
+      playersSnapshot.forEach((player) => {
+        const playerData = player.val();
+        if (playerData.gameId === gameId && player.key !== playerId) {
+          allPlayers.push({
+            username: playerData.username,
+            isWinner: playerData.isWinner,
+          });
+        }
+      });
+    }
 
-    return { ...gameSnapshot.val(), players };
+    return {
+      currentPlayer,
+      otherPlayers: allPlayers,
+    };
   } catch (error) {
-    console.error('Error getting game or player data:', error);
-    throw error;
+    console.error('Error fetching player or game players:', error);
+    return { error: 'An error occurred while fetching data.' };
   }
 };
 
@@ -38,27 +50,25 @@ export async function GET(req) {
   if (!gameId || !playerId) {
     return new Response(
       JSON.stringify({ error: 'Game ID and Player ID are required.' }),
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
 
   try {
-    const gameData = await getGameData(gameId);
+    const data = await getPlayerAndGamePlayers(gameId, playerId);
 
-    if (gameData.error) {
-      return new Response(JSON.stringify({ error: gameData.error }), {
+    if (data.error) {
+      return new Response(JSON.stringify({ error: data.error }), {
         status: 404,
       });
     } else {
-      return new Response(JSON.stringify(gameData), { status: 200 });
+      return new Response(JSON.stringify(data), { status: 200 });
     }
   } catch (error) {
-    console.error('Error getting game or player data:', error);
+    console.error('Error in API:', error);
     return new Response(
       JSON.stringify({
-        error: 'An error occurred while fetching game or player data.',
+        error: 'An error occurred while fetching the game or player data.',
       }),
       { status: 500 }
     );
