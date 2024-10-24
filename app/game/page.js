@@ -1,11 +1,10 @@
 'use client';
 import BingoCard from '@/app/components/BingoCard/BingoCard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function Game() {
+function GameContent() {
   const [playerData, setPlayerData] = useState(null);
-  const [players, setPlayers] = useState([]);
   const searchParams = useSearchParams();
 
   const gameId = searchParams.get('gameId');
@@ -23,9 +22,6 @@ export default function Game() {
         if (response.ok) {
           const data = await response.json();
           setPlayerData(data);
-
-          const allPlayers = data.players || [];
-          setPlayers(allPlayers);
         } else {
           setPlayerData(null);
         }
@@ -35,12 +31,6 @@ export default function Game() {
     };
 
     fetchPlayerData();
-
-    const intervalId = setInterval(() => {
-      fetchPlayerData();
-    }, 5000);
-
-    return () => clearInterval(intervalId);
   }, [gameId, playerId]);
 
   return (
@@ -49,11 +39,11 @@ export default function Game() {
         <div>
           <p>Username: {playerData.username}</p>
           <p>Others can join this Bingo by entering the code: {gameId}</p>
-          <BingoCard cellContent={playerData.bingoSquares} />
+          <BingoCard cellContent={playerData.bingoCard} />
 
           <h3>Players in this game:</h3>
           <ul>
-            {players
+            {playerData.players
               .filter((player) => player.playerId !== playerId)
               .map((player) => (
                 <li
@@ -69,5 +59,13 @@ export default function Game() {
         <p>No player found.</p>
       )}
     </div>
+  );
+}
+
+export default function Game() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GameContent />
+    </Suspense>
   );
 }
