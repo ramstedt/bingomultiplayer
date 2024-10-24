@@ -2,7 +2,7 @@ import './globals.css';
 import { Rethink_Sans } from 'next/font/google';
 
 const rethinkSans = Rethink_Sans({
-  weight: ['400', '700'],
+  weight: '400',
   subsets: ['latin'],
   display: 'swap',
 });
