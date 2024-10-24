@@ -39,7 +39,7 @@ function GameContent() {
         <div>
           <p>Username: {playerData.username}</p>
           <p>Others can join this Bingo by entering the code: {gameId}</p>
-          <BingoCard cellContent={playerData.bingoCard} />
+          <BingoCard cellContent={playerData.bingoSquares} />
 
           <h3>Players in this game:</h3>
           <ul>
