@@ -1,0 +1,9 @@
+.joinForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.joinForm > *,
+.joinForm input {
+  width: 100%;
+}

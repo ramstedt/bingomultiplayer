@@ -1,14 +1,17 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import BingoCard from '../components/BingoCard/BingoCard';
 import styles from './create.module.css';
 
-export default function Home() {
-  const [name, setName] = useState('');
+export default function Create() {
+  const router = useRouter();
+  const [username, setUsername] = useState('');
   const [bingoSquares, setBingoSquares] = useState(Array(24).fill(''));
+  const [createdGame, setCreatedGame] = useState(null);
 
   useEffect(() => {
-    const initialSquares = Array.from({ length: 24 }, (_, i) => ``);
+    const initialSquares = Array.from({ length: 24 }, () => 'test');
     setBingoSquares(initialSquares);
   }, []);
 
@@ -18,27 +21,50 @@ export default function Home() {
     setBingoSquares(updatedSquares);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
     const formData = {
-      name: name,
-      bingoSquares: bingoSquares,
+      username: username,
+      bingoCard: bingoSquares,
     };
-    console.log('Form submitted:', JSON.stringify(formData, null, 2));
+
+    try {
+      const response = await fetch('/api/createGame', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setCreatedGame(result);
+        router.push(
+          `/game?gameId=${result.gameId}&playerId=${result.playerId}`
+        );
+      } else {
+        console.error('Error creating game:', result.error);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
     <>
-      <h1>Create game</h1>
+      <h1>Create Game</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor='name'>Name:</label>
+        <label htmlFor='username'>Username:</label>
         <br />
         <input
           type='text'
-          id='name'
-          name='name'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          id='username'
+          name='username'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
         <br />
@@ -56,13 +82,34 @@ export default function Home() {
             />
           ))}
         </div>
-        <button type='submit'>Create game</button>
+        <button type='submit'>Create Game</button>
       </form>
+
       <h2>Preview</h2>
       <p className={styles.text}>
         (Note: when players join the game, their bingo card will be randomised)
       </p>
       <BingoCard cellContent={bingoSquares} />
+
+      {createdGame && (
+        <div className={styles.gameDetails}>
+          <h2>Game Created!</h2>
+          <p>
+            <strong>Game ID:</strong> {createdGame.gameId}
+          </p>
+          <p>
+            <strong>Username:</strong> {createdGame.username}
+          </p>
+          <h3>Bingo Card:</h3>
+          <div className={styles.bingoCard}>
+            {createdGame.bingoCard.map((square, index) => (
+              <div key={index} className={styles.cell}>
+                {square}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }

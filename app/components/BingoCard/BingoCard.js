@@ -13,61 +13,50 @@ const BingoCard = ({ cellContent }) => {
   const [bingoStatus, setBingoStatus] = useState('');
 
   useEffect(() => {
-    const cellContentArray = Object.values(cellContent);
+    // Ensure cellContent is valid before proceeding
+    if (cellContent && typeof cellContent === 'object') {
+      const cellContentArray = Object.values(cellContent);
+      cellContentArray.splice(12, 0, '');
 
-    cellContentArray.splice(12, 0, '');
-
-    const newGrid = Array(5)
-      .fill(null)
-      .map((_, rowIndex) =>
-        Array(5)
-          .fill(null)
-          .map((_, colIndex) =>
-            rowIndex === 2 && colIndex === 2 ? (
-              <div key={`free-${rowIndex}-${colIndex}`} className={styles.free}>
-                <CiStar /> <div>Free</div>
-              </div>
-            ) : (
-              <div key={`${rowIndex}-${colIndex}`}>
-                {cellContentArray[rowIndex * 5 + colIndex]}
-              </div>
+      const newGrid = Array(5)
+        .fill(null)
+        .map((_, rowIndex) =>
+          Array(5)
+            .fill(null)
+            .map((_, colIndex) =>
+              rowIndex === 2 && colIndex === 2 ? (
+                <div
+                  key={`free-${rowIndex}-${colIndex}`}
+                  className={styles.free}
+                >
+                  <CiStar /> <div>Free</div>
+                </div>
+              ) : (
+                <div key={`${rowIndex}-${colIndex}`}>
+                  {cellContentArray[rowIndex * 5 + colIndex] || ' '}{' '}
+                </div>
+              )
             )
-          )
-      );
+        );
 
-    setGrid(newGrid);
+      setGrid(newGrid);
+    } else {
+      console.warn('Invalid cellContent:', cellContent);
+      setGrid(Array(5).fill(Array(5).fill(' ')));
+    }
   }, [cellContent]);
 
   const checkBingo = (markedGrid) => {
-    const isFreeCell = (cell) => {
-      return (
-        cell === true || (typeof cell === 'string' && cell.includes('free'))
-      );
-    };
-
-    // Check rows
     for (let row of markedGrid) {
-      if (row.every((cell) => cell === true)) {
-        return true;
-      }
+      if (row.every((cell) => cell === true)) return true;
     }
 
-    // Check columns
     for (let col = 0; col < 5; col++) {
-      if (markedGrid.every((row) => row[col] === true)) {
-        return true;
-      }
+      if (markedGrid.every((row) => row[col] === true)) return true;
     }
 
-    // Check diagonal top-left to bottom-right
-    if (markedGrid.every((row, index) => row[index] === true)) {
-      return true;
-    }
-
-    // Check diagonal top-right to bottom-left
-    if (markedGrid.every((row, index) => row[4 - index] === true)) {
-      return true;
-    }
+    if (markedGrid.every((row, index) => row[index] === true)) return true;
+    if (markedGrid.every((row, index) => row[4 - index] === true)) return true;
 
     return false;
   };
