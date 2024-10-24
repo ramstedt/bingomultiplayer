@@ -5,22 +5,27 @@ import { useSearchParams } from 'next/navigation';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
+  const [players, setPlayers] = useState([]);
   const searchParams = useSearchParams();
 
   const gameId = searchParams.get('gameId');
   const playerId = searchParams.get('playerId');
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!playerId || !gameId) return;
+    if (!playerId || !gameId) return;
 
+    const fetchPlayerData = async () => {
       try {
         const response = await fetch(
           `/api/game?gameId=${gameId}&playerId=${playerId}`
         );
+
         if (response.ok) {
           const data = await response.json();
           setPlayerData(data);
+
+          const allPlayers = data.players || [];
+          setPlayers(allPlayers);
         } else {
           setPlayerData(null);
         }
@@ -29,7 +34,13 @@ export default function Game() {
       }
     };
 
-    fetchData();
+    fetchPlayerData();
+
+    const intervalId = setInterval(() => {
+      fetchPlayerData();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, [gameId, playerId]);
 
   return (
@@ -38,7 +49,21 @@ export default function Game() {
         <div>
           <p>Username: {playerData.username}</p>
           <p>Others can join this Bingo by entering the code: {gameId}</p>
-          <BingoCard cellContent={playerData.bingoCard} />
+          <BingoCard cellContent={playerData.bingoSquares} />
+
+          <h3>Players in this game:</h3>
+          <ul>
+            {players
+              .filter((player) => player.playerId !== playerId)
+              .map((player) => (
+                <li
+                  key={player.playerId}
+                  style={{ color: player.isWinner ? 'green' : 'black' }}
+                >
+                  {player.username} {player.isWinner && '(Winner!)'}
+                </li>
+              ))}
+          </ul>
         </div>
       ) : (
         <p>No player found.</p>

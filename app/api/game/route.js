@@ -1,7 +1,7 @@
-import { db } from '@/firebase.config'; // Adjust the path as necessary
+import { db } from '@/firebase.config';
 import { ref, get } from 'firebase/database';
 
-const getPlayerData = async (gameId, playerId) => {
+const getGameData = async (gameId) => {
   try {
     const gameRef = ref(db, `Games/${gameId}`);
     const gameSnapshot = await get(gameRef);
@@ -11,21 +11,19 @@ const getPlayerData = async (gameId, playerId) => {
       return { error: 'Game not found' };
     }
 
-    const playerRef = ref(db, `Players/${playerId}`);
-    const playerSnapshot = await get(playerRef);
+    const playersRef = ref(db, `Players`);
+    const playersSnapshot = await get(playersRef);
 
-    if (playerSnapshot.exists()) {
-      const playerData = playerSnapshot.val();
-
+    const players = [];
+    playersSnapshot.forEach((childSnapshot) => {
+      const playerData = childSnapshot.val();
+      const playerId = childSnapshot.key;
       if (playerData.gameId === gameId) {
-        return playerData;
-      } else {
-        return { error: 'Player does not belong to this game' };
+        players.push({ playerId, ...playerData });
       }
-    } else {
-      console.log('No player found with that ID.');
-      return { error: 'Player not found' };
-    }
+    });
+
+    return { ...gameSnapshot.val(), players };
   } catch (error) {
     console.error('Error getting game or player data:', error);
     throw error;
@@ -47,14 +45,14 @@ export async function GET(req) {
   }
 
   try {
-    const playerData = await getPlayerData(gameId, playerId);
+    const gameData = await getGameData(gameId);
 
-    if (playerData.error) {
-      return new Response(JSON.stringify({ error: playerData.error }), {
+    if (gameData.error) {
+      return new Response(JSON.stringify({ error: gameData.error }), {
         status: 404,
       });
     } else {
-      return new Response(JSON.stringify(playerData), { status: 200 });
+      return new Response(JSON.stringify(gameData), { status: 200 });
     }
   } catch (error) {
     console.error('Error getting game or player data:', error);
