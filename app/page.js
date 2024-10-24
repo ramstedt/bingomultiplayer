@@ -1,7 +1,6 @@
 'use client';
 import BingoCard from './components/BingoCard/BingoCard';
 import { useState, useEffect } from 'react';
-import { db } from '@/firebase.config';
 import { ref, child, get } from 'firebase/database';
 import LinkButton from './components/_atoms/LinkButton/LinkButton';
 
