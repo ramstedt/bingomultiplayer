@@ -3,7 +3,6 @@
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(5, 1fr);
   gap: 5px;
-  background-color: #fff;
   margin: 0 auto;
   width: 95vw;
   height: 95vw;
@@ -12,35 +11,61 @@
 }
 
 .cell {
-  padding: 1px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 2px solid #000;
-  background-color: #ddd;
   font-size: calc(3vw);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
+  line-height: 1.1;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
 }
 
 @media (min-width: 500px) {
-  .bingoCard div {
-    font-size: 20px;
+  .cell {
+    font-size: clamp(12px, 2.5vw, 15px);
   }
 }
 
 .cell:hover {
-  background-color: #bbb;
+  background-color: #4b79e3;
 }
 
 .marked {
-  background-color: #4caf50;
-  color: white;
+  background-color: #4b79e3;
+  color: rgb(18, 18, 18);
 }
+
 .status {
   margin-top: 20px;
   font-size: 24px;
   font-weight: bold;
   color: #4caf50;
+}
+
+.free {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  justify-items: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.free > * {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.free svg {
+  height: 120%;
+  width: 120%;
+  color: #3a5066;
 }

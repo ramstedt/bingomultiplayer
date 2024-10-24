@@ -1,58 +1,69 @@
 'use client';
 import { useState, useEffect } from 'react';
 import styles from './BingoCard.module.css';
+import { CiStar } from 'react-icons/ci';
 
 const BingoCard = ({ cellContent }) => {
-
-  const initialGrid = Array(5)
+  const initialMarkedGrid = Array(5)
     .fill(null)
     .map(() => Array(5).fill(false));
-  const [grid, setGrid] = useState(initialGrid);
+
+  const [grid, setGrid] = useState([]);
+  const [markedGrid, setMarkedGrid] = useState(initialMarkedGrid);
   const [bingoStatus, setBingoStatus] = useState('');
 
   useEffect(() => {
     const cellContentArray = Object.values(cellContent);
 
-    cellContentArray.splice(12, 0, "");
+    cellContentArray.splice(12, 0, '');
 
     const newGrid = Array(5)
       .fill(null)
       .map((_, rowIndex) =>
         Array(5)
-          .fill(false)
+          .fill(null)
           .map((_, colIndex) =>
-            rowIndex === 2 && colIndex === 2
-              ? 'Free'
-              : cellContentArray[rowIndex * 5 + colIndex]
+            rowIndex === 2 && colIndex === 2 ? (
+              <div className={styles.free}>
+                <CiStar /> <div>Free</div>
+              </div>
+            ) : (
+              cellContentArray[rowIndex * 5 + colIndex]
+            )
           )
       );
 
     setGrid(newGrid);
   }, [cellContent]);
 
-  const checkBingo = (grid) => {
-    for (let row of grid) {
-      if (row.every((cell) => cell === true || cell === 'Free')) {
+  const checkBingo = (markedGrid) => {
+    const isFreeCell = (cell) => {
+      return (
+        cell === true || (typeof cell === 'string' && cell.includes('free'))
+      );
+    };
+
+    // Check rows
+    for (let row of markedGrid) {
+      if (row.every((cell) => cell === true)) {
         return true;
       }
     }
 
+    // Check columns
     for (let col = 0; col < 5; col++) {
-      if (grid.every((row) => row[col] === true || row[col] === 'Free')) {
+      if (markedGrid.every((row) => row[col] === true)) {
         return true;
       }
     }
 
-    if (
-      grid.every((row, index) => row[index] === true || row[index] === 'Free')
-    ) {
+    // Check diagonal top-left to bottom-right
+    if (markedGrid.every((row, index) => row[index] === true)) {
       return true;
     }
-    if (
-      grid.every(
-        (row, index) => row[4 - index] === true || row[4 - index] === 'Free'
-      )
-    ) {
+
+    // Check diagonal top-right to bottom-left
+    if (markedGrid.every((row, index) => row[4 - index] === true)) {
       return true;
     }
 
@@ -60,17 +71,17 @@ const BingoCard = ({ cellContent }) => {
   };
 
   const handleClick = (rowIndex, colIndex) => {
-    const updatedGrid = grid.map((row, rIdx) =>
-      row.map((cell, cIdx) =>
-        rIdx === rowIndex && cIdx === colIndex ? true : cell
+    const updatedMarkedGrid = markedGrid.map((row, rIdx) =>
+      row.map((marked, cIdx) =>
+        rIdx === rowIndex && cIdx === colIndex ? !marked : marked
       )
     );
 
-    setGrid(updatedGrid);
+    setMarkedGrid(updatedMarkedGrid);
   };
 
   useEffect(() => {
-    if (checkBingo(grid)) {
+    if (checkBingo(markedGrid)) {
       const announce = window.confirm(
         'You got Bingo! Do you want to announce it?'
       );
@@ -78,7 +89,7 @@ const BingoCard = ({ cellContent }) => {
         setBingoStatus('Bingo! 🎉');
       }
     }
-  }, [grid]);
+  }, [markedGrid]);
 
   return (
     <div>
@@ -87,7 +98,9 @@ const BingoCard = ({ cellContent }) => {
           row.map((cell, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
-              className={`${styles.cell} ${cell === true ? styles.marked : ''}`}
+              className={`${styles.cell} ${
+                markedGrid[rowIndex][colIndex] ? styles.marked : ''
+              }`}
               onClick={() => handleClick(rowIndex, colIndex)}
             >
               {cell}
