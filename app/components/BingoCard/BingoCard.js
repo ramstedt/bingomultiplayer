@@ -24,11 +24,13 @@ const BingoCard = ({ cellContent }) => {
           .fill(null)
           .map((_, colIndex) =>
             rowIndex === 2 && colIndex === 2 ? (
-              <div className={styles.free}>
+              <div key={`free-${rowIndex}-${colIndex}`} className={styles.free}>
                 <CiStar /> <div>Free</div>
               </div>
             ) : (
-              cellContentArray[rowIndex * 5 + colIndex]
+              <div key={`${rowIndex}-${colIndex}`}>
+                {cellContentArray[rowIndex * 5 + colIndex]}
+              </div>
             )
           )
       );
