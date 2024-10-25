@@ -1,7 +1,7 @@
 'use client';
-import styles from './game.module.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import styles from './game.module.css';
 import { ref, onValue, off } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import BingoCard from '@/app/components/BingoCard/BingoCard';
@@ -10,7 +10,6 @@ import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
-  const searchParams = useSearchParams();
   const [visibleCardIndex, setVisibleCardIndex] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -18,6 +17,29 @@ export default function Game() {
     setVisibleCardIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GameContent
+        playerData={playerData}
+        setPlayerData={setPlayerData}
+        toggleBingoCard={toggleBingoCard}
+        visibleCardIndex={visibleCardIndex}
+        showConfetti={showConfetti}
+        setShowConfetti={setShowConfetti}
+      />
+    </Suspense>
+  );
+}
+
+function GameContent({
+  playerData,
+  setPlayerData,
+  toggleBingoCard,
+  visibleCardIndex,
+  showConfetti,
+  setShowConfetti,
+}) {
+  const searchParams = useSearchParams();
   const gameId = searchParams.get('gameId');
   const playerId = searchParams.get('playerId');
 
@@ -53,8 +75,6 @@ export default function Game() {
         });
 
         if (currentPlayer) {
-          console.log('Current Player:', currentPlayer);
-
           setPlayerData({
             currentPlayer: {
               ...currentPlayer,
