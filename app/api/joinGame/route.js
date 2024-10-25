@@ -29,9 +29,9 @@ export async function POST(req) {
       );
     }
 
-    gameId = gameId.toUpperCase();
+    const gameIdUpperCase = gameId.toUpperCase();
 
-    const gameRef = ref(db, `Games/${gameId}`);
+    const gameRef = ref(db, `Games/${gameIdUpperCase}`);
     const gameSnapshot = await get(gameRef);
 
     if (!gameSnapshot.exists()) {
@@ -62,14 +62,16 @@ export async function POST(req) {
 
     const playerData = {
       username: name,
-      gameId: gameId,
+      gameId: gameIdUpperCase,
       bingoCard: randomizedBingoCard,
       isWinner: false,
     };
 
     await set(ref(db, `Players/${playerId}`), playerData);
 
-    return new Response(JSON.stringify({ gameId, playerId }), { status: 200 });
+    return new Response(JSON.stringify({ gameIdUpperCase, playerId }), {
+      status: 200,
+    });
   } catch (error) {
     console.error('Error joining game:', error);
     return new Response(
