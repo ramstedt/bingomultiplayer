@@ -20,6 +20,8 @@ The application is mobile-first and should work on any device and any size scree
 
 - Front page:
   - You should see two options: Join Game and Create a game.
+  - Create game should take you to /create
+  - Join game should take you to the game you wish to join (see Join an existing game further down)
 - Create game:
   - Fill in the squares. The preview below should reflect your input. The preview is not clickable.
   - You should not be able to create a game without a username or any empty squares.
