@@ -22,31 +22,23 @@ const BingoCard = ({ cellContent, playerId, gameId }) => {
           Array(5)
             .fill(null)
             .map((_, colIndex) => {
-              const cell = cellContentArray[rowIndex * 5 + colIndex];
-              if (rowIndex === 2 && colIndex === 2) {
-                return (
-                  <div
-                    key={`free-${rowIndex}-${colIndex}`}
-                    className={`${styles.free} ${styles.cell}`}
-                  >
-                    <CiStar /> <div>Free</div>
-                  </div>
-                );
-              }
+              const cellIndex = rowIndex * 5 + colIndex;
               return (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`${styles.cell} ${
-                    cell.isMarked ? styles.marked : ''
-                  }`}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
-                >
-                  {cell.text || ' '}
-                </div>
+                cellContentArray[cellIndex] || { text: '', isMarked: false }
               );
             })
         );
+
       setGrid(newGrid);
+
+      const initializedMarkedGrid = Array(5)
+        .fill(null)
+        .map((_, rowIndex) =>
+          cellContentArray
+            .slice(rowIndex * 5, rowIndex * 5 + 5)
+            .map((cell) => cell.isMarked)
+        );
+      setMarkedGrid(initializedMarkedGrid);
     } else {
       console.warn('Invalid cellContent:', cellContent);
       setGrid(Array(5).fill(Array(5).fill({ text: '', isMarked: false })));
@@ -54,8 +46,6 @@ const BingoCard = ({ cellContent, playerId, gameId }) => {
   }, [cellContent]);
 
   const handleCellClick = async (rowIndex, colIndex) => {
-    if (rowIndex === 2 && colIndex === 2) return;
-
     const cellIndex = rowIndex * 5 + colIndex;
 
     try {
@@ -69,16 +59,23 @@ const BingoCard = ({ cellContent, playerId, gameId }) => {
         }),
       });
 
-      const { bingoCard, isWinner } = await response.json();
-      if (isWinner) {
+      const { bingoCard, hasBingo } = await response.json();
+
+      if (hasBingo) {
         setBingoStatus('Bingo! 🎉');
       } else {
         setBingoStatus('');
       }
 
-      // Update the grid and marked grid state
-      setGrid(bingoCard);
-      const updatedMarkedGrid = bingoCard.map((cell) => cell.isMarked);
+      const updatedGrid = Array(5)
+        .fill(null)
+        .map((_, rowIndex) => bingoCard.slice(rowIndex * 5, rowIndex * 5 + 5));
+
+      setGrid(updatedGrid);
+
+      const updatedMarkedGrid = updatedGrid.map((row) =>
+        row.map((cell) => cell.isMarked)
+      );
       setMarkedGrid(updatedMarkedGrid);
     } catch (error) {
       console.error('Error toggling square or checking bingo:', error);
@@ -95,9 +92,15 @@ const BingoCard = ({ cellContent, playerId, gameId }) => {
               className={`${styles.cell} ${
                 markedGrid[rowIndex][colIndex] ? styles.marked : ''
               }`}
-              onClick={() => handleCellClick(rowIndex, colIndex)}
+              onPointerUp={() => handleCellClick(rowIndex, colIndex)}
             >
-              {cell}
+              {rowIndex === 2 && colIndex === 2 ? (
+                <div className={`${styles.free}`}>
+                  <CiStar /> <div>Free</div>
+                </div>
+              ) : (
+                cell.text
+              )}
             </div>
           ))
         )}

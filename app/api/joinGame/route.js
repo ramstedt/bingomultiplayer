@@ -37,6 +37,7 @@ export async function POST(req) {
         status: 404,
       });
     }
+
     let playerId;
     let playerExists = true;
 
@@ -50,7 +51,12 @@ export async function POST(req) {
     const gameData = gameSnapshot.val();
     const randomizedBingoCard = shuffleArray([...gameData.bingoSquares]);
 
-    randomizedBingoCard.splice(12, 0, 'free');
+    const freeSquare = {
+      text: 'Free',
+      isMarked: false,
+    };
+
+    randomizedBingoCard.splice(12, 0, freeSquare);
 
     const playerData = {
       username: name,
@@ -65,7 +71,10 @@ export async function POST(req) {
   } catch (error) {
     console.error('Error joining game:', error);
     return new Response(
-      JSON.stringify({ error: 'An error occurred while joining the game.' }),
+      JSON.stringify({
+        error: 'An error occurred while joining the game.',
+        details: error.message,
+      }),
       {
         status: 500,
       }

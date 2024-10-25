@@ -34,10 +34,6 @@
   }
 }
 
-.cell:hover {
-  background-color: #4b79e3;
-}
-
 .marked {
   background-color: #4b79e3;
   color: rgb(18, 18, 18);
