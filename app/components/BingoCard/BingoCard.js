@@ -1,7 +1,7 @@
-'use client';
-import { useState, useEffect } from 'react';
-import styles from './BingoCard.module.css';
-import { CiStar } from 'react-icons/ci';
+"use client";
+import { useState, useEffect } from "react";
+import styles from "./BingoCard.module.css";
+import { CiStar } from "react-icons/ci";
 
 const BingoCard = ({ cellContent }) => {
   const initialMarkedGrid = Array(5)
@@ -10,41 +10,65 @@ const BingoCard = ({ cellContent }) => {
 
   const [grid, setGrid] = useState([]);
   const [markedGrid, setMarkedGrid] = useState(initialMarkedGrid);
-  const [bingoStatus, setBingoStatus] = useState('');
+  const [bingoStatus, setBingoStatus] = useState("");
 
   useEffect(() => {
-    // Ensure cellContent is valid before proceeding
-    if (cellContent && typeof cellContent === 'object') {
-      const cellContentArray = Object.values(cellContent);
-      cellContentArray.splice(12, 0, '');
+    if (Array.isArray(cellContent) && cellContent.length >= 24) {
+      const cellContentArray = [...cellContent];
+      cellContentArray.splice(12, 0, { text: "Free", isMarked: true });
 
       const newGrid = Array(5)
         .fill(null)
         .map((_, rowIndex) =>
           Array(5)
             .fill(null)
-            .map((_, colIndex) =>
-              rowIndex === 2 && colIndex === 2 ? (
+            .map((_, colIndex) => {
+              const cell = cellContentArray[rowIndex * 5 + colIndex];
+              if (rowIndex === 2 && colIndex === 2) {
+                return (
+                  <div
+                    key={`free-${rowIndex}-${colIndex}`}
+                    className={`${styles.free} ${styles.cell}`}
+                  >
+                    <CiStar /> <div>Free</div>
+                  </div>
+                );
+              }
+              return (
                 <div
-                  key={`free-${rowIndex}-${colIndex}`}
-                  className={styles.free}
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`${styles.cell} ${
+                    cell.isMarked ? styles.marked : ""
+                  }`}
+                  onClick={() => handleCellClick(rowIndex, colIndex)}
                 >
-                  <CiStar /> <div>Free</div>
+                  {cell.text || " "}
                 </div>
-              ) : (
-                <div key={`${rowIndex}-${colIndex}`}>
-                  {cellContentArray[rowIndex * 5 + colIndex] || ' '}{' '}
-                </div>
-              )
-            )
+              );
+            })
         );
-
       setGrid(newGrid);
     } else {
-      console.warn('Invalid cellContent:', cellContent);
-      setGrid(Array(5).fill(Array(5).fill(' ')));
+      console.warn("Invalid cellContent:", cellContent);
+      setGrid(Array(5).fill(Array(5).fill({ text: "", isMarked: false })));
     }
   }, [cellContent]);
+
+  const handleCellClick = (rowIndex, colIndex) => {
+    if (rowIndex === 2 && colIndex === 2) return;
+
+    const updatedGrid = [...cellContent];
+    const cellIndex = rowIndex * 5 + colIndex;
+    updatedGrid[cellIndex].isMarked = !updatedGrid[cellIndex].isMarked;
+
+    setMarkedGrid(
+      markedGrid.map((row, rIdx) =>
+        row.map((marked, cIdx) =>
+          rIdx === rowIndex && cIdx === colIndex ? !marked : marked
+        )
+      )
+    );
+  };
 
   const checkBingo = (markedGrid) => {
     for (let row of markedGrid) {
@@ -61,23 +85,13 @@ const BingoCard = ({ cellContent }) => {
     return false;
   };
 
-  const handleClick = (rowIndex, colIndex) => {
-    const updatedMarkedGrid = markedGrid.map((row, rIdx) =>
-      row.map((marked, cIdx) =>
-        rIdx === rowIndex && cIdx === colIndex ? !marked : marked
-      )
-    );
-
-    setMarkedGrid(updatedMarkedGrid);
-  };
-
   useEffect(() => {
     if (checkBingo(markedGrid)) {
       const announce = window.confirm(
-        'You got Bingo! Do you want to announce it?'
+        "You got Bingo! Do you want to announce it?"
       );
       if (announce) {
-        setBingoStatus('Bingo! 🎉');
+        setBingoStatus("Bingo! 🎉");
       }
     }
   }, [markedGrid]);
@@ -90,9 +104,9 @@ const BingoCard = ({ cellContent }) => {
             <div
               key={`${rowIndex}-${colIndex}`}
               className={`${styles.cell} ${
-                markedGrid[rowIndex][colIndex] ? styles.marked : ''
+                markedGrid[rowIndex][colIndex] ? styles.marked : ""
               }`}
-              onClick={() => handleClick(rowIndex, colIndex)}
+              onClick={() => handleCellClick(rowIndex, colIndex)}
             >
               {cell}
             </div>

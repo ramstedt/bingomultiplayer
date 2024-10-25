@@ -1,19 +1,19 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/firebase.config';
-import { ref, get, child, set } from 'firebase/database';
+import { NextResponse } from "next/server";
+import { db } from "@/firebase.config";
+import { ref, get, child, set } from "firebase/database";
 
 const generateGameID = () => {
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   return Array.from({ length: 4 }, () =>
     letters.charAt(Math.floor(Math.random() * letters.length))
-  ).join('');
+  ).join("");
 };
 
 const generatePlayerID = () => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   return Array.from({ length: 8 }, () =>
     characters.charAt(Math.floor(Math.random() * characters.length))
-  ).join('');
+  ).join("");
 };
 
 const checkPlayerIDExists = async (playerId) => {
@@ -47,6 +47,7 @@ const shuffleArray = (array) => {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+  return array;
 };
 
 export async function POST(req) {
@@ -56,22 +57,31 @@ export async function POST(req) {
 
     if (!username || !Array.isArray(bingoCard) || bingoCard.length !== 24) {
       return NextResponse.json(
-        { error: 'Username and 24 bingo squares are required.' },
+        { error: "Username and 24 bingo squares are required." },
         { status: 400 }
       );
     }
-    shuffleArray(bingoCard);
 
-    bingoCard.splice(12, 0, 'free');
+    const shuffledArray = shuffleArray([...bingoCard]);
+
+    let gameCard = bingoCard.map((content) => ({
+      text: content.text,
+      isMarked: false,
+    }));
+
+    let playerCard = shuffledArray.map((content) => ({
+      text: content.text,
+      isMarked: false,
+    }));
+
+    playerCard.splice(12, 0, { text: "Free", isMarked: false });
 
     const playerId = await generateUniquePlayerID();
-
     const gameId = await generateUniqueGameID();
-
     const creationDate = new Date().toISOString();
 
     await set(ref(db, `Games/${gameId}`), {
-      bingoSquares: bingoCard,
+      bingoSquares: gameCard,
       creationDate,
       creatorPlayerId: playerId,
     });
@@ -79,7 +89,7 @@ export async function POST(req) {
     await set(ref(db, `Players/${playerId}`), {
       username,
       gameId,
-      bingoCard,
+      bingoCard: playerCard,
       isWinner: false,
     });
 
@@ -88,16 +98,16 @@ export async function POST(req) {
         gameId,
         playerId,
         username,
-        bingoCard,
+        gameCard,
         isWinner: false,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating user and bingo card:', error);
+    console.error("Error creating user and bingo card:", error.message);
     return NextResponse.json(
       {
-        error: 'An error occurred while creating the user and bingo card.',
+        error: "An error occurred while creating the user and bingo card.",
       },
       { status: 500 }
     );
