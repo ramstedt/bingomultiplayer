@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import styles from './BingoCard.module.css';
 import { CiStar } from 'react-icons/ci';
 
-const BingoCard = ({ cellContent, playerId, gameId }) => {
+const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
   const initialMarkedGrid = Array(5)
     .fill(null)
     .map(() => Array(5).fill(false));
@@ -46,6 +46,9 @@ const BingoCard = ({ cellContent, playerId, gameId }) => {
   }, [cellContent]);
 
   const handleCellClick = async (rowIndex, colIndex) => {
+    if (!clickable) {
+      return;
+    }
     const cellIndex = rowIndex * 5 + colIndex;
 
     try {

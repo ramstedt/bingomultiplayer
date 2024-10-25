@@ -43,6 +43,9 @@ export async function POST(request) {
     if (hasBingo) {
       const playerRef = ref(db, `Players/${playerId}`);
       await update(playerRef, { isWinner: true });
+    } else {
+      const playerRef = ref(db, `Players/${playerId}`);
+      await update(playerRef, { isWinner: false });
     }
 
     return new Response(JSON.stringify({ bingoCard, hasBingo }), {

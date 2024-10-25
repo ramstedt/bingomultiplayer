@@ -100,7 +100,7 @@ export default function Create() {
       <p className={styles.text}>
         (Note: when players join the game, their bingo card will be randomised)
       </p>
-      <BingoCard cellContent={preparePreview()} />
+      <BingoCard cellContent={preparePreview()} clickable={false} />
     </>
   );
 }
