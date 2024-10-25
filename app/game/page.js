@@ -1,14 +1,14 @@
-"use client";
-import BingoCard from "@/app/components/BingoCard/BingoCard";
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+'use client';
+import BingoCard from '@/app/components/BingoCard/BingoCard';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
   const searchParams = useSearchParams();
 
-  const gameId = searchParams.get("gameId");
-  const playerId = searchParams.get("playerId");
+  const gameId = searchParams.get('gameId');
+  const playerId = searchParams.get('playerId');
 
   useEffect(() => {
     if (!playerId || !gameId) return;
@@ -25,7 +25,7 @@ export default function Game() {
           setPlayerData(null);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
 
@@ -39,16 +39,20 @@ export default function Game() {
           <p>Username: {playerData.currentPlayer.username}</p>
           <p>Others can join this Bingo by entering the code: {gameId}</p>
 
-          <BingoCard cellContent={playerData.currentPlayer.bingoCard} />
+          <BingoCard
+            cellContent={playerData.currentPlayer.bingoCard}
+            gameId={gameId}
+            playerId={playerId}
+          />
 
           <h3>Other Players in this game:</h3>
           <ul>
             {playerData.otherPlayers.map((player, index) => (
               <li
                 key={index}
-                style={{ color: player.isWinner ? "green" : "black" }}
+                style={{ color: player.isWinner ? 'green' : 'black' }}
               >
-                {player.username} {player.isWinner && "(Winner!)"}
+                {player.username} {player.isWinner && '(Winner!)'}
               </li>
             ))}
           </ul>

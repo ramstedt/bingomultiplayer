@@ -1,4 +1,4 @@
-import { db } from '@/firebase.config';
+import { db } from '@/lib/firebase';
 import { ref, get, remove } from 'firebase/database';
 
 const isGameOlderThan30Days = (creationDate) => {

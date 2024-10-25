@@ -1,19 +1,19 @@
-import { NextResponse } from "next/server";
-import { db } from "@/firebase.config";
-import { ref, get, child, set } from "firebase/database";
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/firebase';
+import { ref, get, child, set } from 'firebase/database';
 
 const generateGameID = () => {
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   return Array.from({ length: 4 }, () =>
     letters.charAt(Math.floor(Math.random() * letters.length))
-  ).join("");
+  ).join('');
 };
 
 const generatePlayerID = () => {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   return Array.from({ length: 8 }, () =>
     characters.charAt(Math.floor(Math.random() * characters.length))
-  ).join("");
+  ).join('');
 };
 
 const checkPlayerIDExists = async (playerId) => {
@@ -57,7 +57,7 @@ export async function POST(req) {
 
     if (!username || !Array.isArray(bingoCard) || bingoCard.length !== 24) {
       return NextResponse.json(
-        { error: "Username and 24 bingo squares are required." },
+        { error: 'Username and 24 bingo squares are required.' },
         { status: 400 }
       );
     }
@@ -74,7 +74,7 @@ export async function POST(req) {
       isMarked: false,
     }));
 
-    playerCard.splice(12, 0, { text: "Free", isMarked: false });
+    playerCard.splice(12, 0, { text: 'Free', isMarked: false });
 
     const playerId = await generateUniquePlayerID();
     const gameId = await generateUniqueGameID();
@@ -104,10 +104,10 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating user and bingo card:", error.message);
+    console.error('Error creating user and bingo card:', error.message);
     return NextResponse.json(
       {
-        error: "An error occurred while creating the user and bingo card.",
+        error: 'An error occurred while creating the user and bingo card.',
       },
       { status: 500 }
     );

@@ -1,21 +1,20 @@
-"use client";
-import { useState, useEffect } from "react";
-import styles from "./BingoCard.module.css";
-import { CiStar } from "react-icons/ci";
+'use client';
+import { useState, useEffect } from 'react';
+import styles from './BingoCard.module.css';
+import { CiStar } from 'react-icons/ci';
 
-const BingoCard = ({ cellContent }) => {
+const BingoCard = ({ cellContent, playerId, gameId }) => {
   const initialMarkedGrid = Array(5)
     .fill(null)
     .map(() => Array(5).fill(false));
 
   const [grid, setGrid] = useState([]);
   const [markedGrid, setMarkedGrid] = useState(initialMarkedGrid);
-  const [bingoStatus, setBingoStatus] = useState("");
+  const [bingoStatus, setBingoStatus] = useState('');
 
   useEffect(() => {
     if (Array.isArray(cellContent) && cellContent.length >= 24) {
       const cellContentArray = [...cellContent];
-      cellContentArray.splice(12, 0, { text: "Free", isMarked: true });
 
       const newGrid = Array(5)
         .fill(null)
@@ -38,63 +37,53 @@ const BingoCard = ({ cellContent }) => {
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   className={`${styles.cell} ${
-                    cell.isMarked ? styles.marked : ""
+                    cell.isMarked ? styles.marked : ''
                   }`}
                   onClick={() => handleCellClick(rowIndex, colIndex)}
                 >
-                  {cell.text || " "}
+                  {cell.text || ' '}
                 </div>
               );
             })
         );
       setGrid(newGrid);
     } else {
-      console.warn("Invalid cellContent:", cellContent);
-      setGrid(Array(5).fill(Array(5).fill({ text: "", isMarked: false })));
+      console.warn('Invalid cellContent:', cellContent);
+      setGrid(Array(5).fill(Array(5).fill({ text: '', isMarked: false })));
     }
   }, [cellContent]);
 
-  const handleCellClick = (rowIndex, colIndex) => {
+  const handleCellClick = async (rowIndex, colIndex) => {
     if (rowIndex === 2 && colIndex === 2) return;
 
-    const updatedGrid = [...cellContent];
     const cellIndex = rowIndex * 5 + colIndex;
-    updatedGrid[cellIndex].isMarked = !updatedGrid[cellIndex].isMarked;
 
-    setMarkedGrid(
-      markedGrid.map((row, rIdx) =>
-        row.map((marked, cIdx) =>
-          rIdx === rowIndex && cIdx === colIndex ? !marked : marked
-        )
-      )
-    );
-  };
+    try {
+      const response = await fetch('/api/updateSquare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playerId,
+          gameId,
+          cellIndex,
+        }),
+      });
 
-  const checkBingo = (markedGrid) => {
-    for (let row of markedGrid) {
-      if (row.every((cell) => cell === true)) return true;
-    }
-
-    for (let col = 0; col < 5; col++) {
-      if (markedGrid.every((row) => row[col] === true)) return true;
-    }
-
-    if (markedGrid.every((row, index) => row[index] === true)) return true;
-    if (markedGrid.every((row, index) => row[4 - index] === true)) return true;
-
-    return false;
-  };
-
-  useEffect(() => {
-    if (checkBingo(markedGrid)) {
-      const announce = window.confirm(
-        "You got Bingo! Do you want to announce it?"
-      );
-      if (announce) {
-        setBingoStatus("Bingo! 🎉");
+      const { bingoCard, isWinner } = await response.json();
+      if (isWinner) {
+        setBingoStatus('Bingo! 🎉');
+      } else {
+        setBingoStatus('');
       }
+
+      // Update the grid and marked grid state
+      setGrid(bingoCard);
+      const updatedMarkedGrid = bingoCard.map((cell) => cell.isMarked);
+      setMarkedGrid(updatedMarkedGrid);
+    } catch (error) {
+      console.error('Error toggling square or checking bingo:', error);
     }
-  }, [markedGrid]);
+  };
 
   return (
     <div>
@@ -104,7 +93,7 @@ const BingoCard = ({ cellContent }) => {
             <div
               key={`${rowIndex}-${colIndex}`}
               className={`${styles.cell} ${
-                markedGrid[rowIndex][colIndex] ? styles.marked : ""
+                markedGrid[rowIndex][colIndex] ? styles.marked : ''
               }`}
               onClick={() => handleCellClick(rowIndex, colIndex)}
             >
