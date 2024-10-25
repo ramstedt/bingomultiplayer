@@ -1,4 +1,25 @@
 .text {
   font-size: smaller;
   margin: 1rem 0;
+  text-align: center;
+}
+
+.squareInputs {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.createGameForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.createGameForm label {
+  text-align: center;
+  margin: auto;
 }

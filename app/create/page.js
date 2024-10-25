@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BingoCard from '../components/BingoCard/BingoCard';
 import styles from './create.module.css';
+import LinkButton from '../components/_atoms/LinkButton/LinkButton';
 
 export default function Create() {
   const router = useRouter();
@@ -67,20 +68,10 @@ export default function Create() {
   return (
     <>
       <h1>Create Game</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor='username'>Username:</label>
+      <form className={styles.createGameForm} onSubmit={handleSubmit}>
         <br />
-        <input
-          type='text'
-          id='username'
-          name='username'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <br />
-        <h2>Bingo Squares:</h2>
-        <div className='bingo-squares'>
+        <label>Bingo Squares:</label>
+        <div className={styles.squareInputs}>
           {bingoSquares.map((square, index) => (
             <input
               key={index}
@@ -93,7 +84,20 @@ export default function Create() {
             />
           ))}
         </div>
-        <button type='submit'>Create Game</button>
+        <br />
+        <label htmlFor='username'>Username:</label>
+        <input
+          type='text'
+          id='username'
+          name='username'
+          placeholder='Enter your username'
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <br />
+        <LinkButton isButton={true} text='Create Game' />
+        <br />
       </form>
 
       <h2>Preview</h2>

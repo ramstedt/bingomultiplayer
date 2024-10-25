@@ -16,10 +16,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## QA testing instructions
 
+The application is mobile-first and should work on any device and any size screen.
+
 - Front page:
   - You should see two options: Join Game and Create a game.
 - Create game:
-  - Fill in the squares. The preview below should reflect your input.
+  - Fill in the squares. The preview below should reflect your input. The preview is not clickable.
   - You should not be able to create a game without a username or any empty squares.
   - A game should be sucessfully created once the form is correctly filled in. You should be redirected to a game session with your username and a randomised bingo card.
 - Join an existing game:
