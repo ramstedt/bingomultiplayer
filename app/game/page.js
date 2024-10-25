@@ -4,11 +4,14 @@ import { useSearchParams } from 'next/navigation';
 import { ref, onValue, off } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import BingoCard from '@/app/components/BingoCard/BingoCard';
+import Confetti from 'react-confetti';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
   const searchParams = useSearchParams();
   const [visibleCardIndex, setVisibleCardIndex] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+
   const toggleBingoCard = (index) => {
     setVisibleCardIndex((prevIndex) => (prevIndex === index ? null : index));
   };
@@ -65,9 +68,15 @@ export default function Game() {
         setPlayerData(null);
       }
     });
-
     return () => off(playersRef, 'value', unsubscribe);
   }, [gameId, playerId]);
+
+  useEffect(() => {
+    if (playerData?.currentPlayer.isWinner) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 4000);
+    }
+  }, [playerData?.currentPlayer.isWinner]);
 
   return (
     <div>
@@ -82,7 +91,9 @@ export default function Game() {
             playerId={playerId}
             clickable={true}
           />
-
+          {showConfetti && (
+            <Confetti width={window.innerWidth} height={window.innerHeight} />
+          )}
           <h3>Other Players in this game:</h3>
           <ul>
             {playerData.otherPlayers.map((player, index) => (
