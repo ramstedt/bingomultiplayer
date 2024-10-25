@@ -33,6 +33,7 @@ The application is mobile-first and should work on any device and any size scree
 - Playing the game:
   - You should be able to select and unselect any tile. A selected tile should turn blue.
   - When you have your first Bingo, confetti should show up and a "Bingo!" message should appear below the card.
+  - When confettis shows up, it should go away after a couple of seconds.
 - Interacting with other players:
 
   - If there are other players in the same session, you should see their usernames below your card.
