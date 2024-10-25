@@ -1,8 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## How to install locally
 
-## Getting Started
-
-First, run the development server:
+First, fill in the necessary environment keys (see .env.example). Then run the development server:
 
 ```bash
 npm run dev
@@ -16,21 +14,27 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## QA testing instructions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Front page:
+  - You should see two options: Join Game and Create a game.
+- Create game:
+  - Fill in the squares. The preview below should reflect your input.
+  - You should not be able to create a game without a username or any empty squares.
+  - A game should be sucessfully created once the form is correctly filled in. You should be redirected to a game session with your username and a randomised bingo card.
+- Join an existing game:
+  - On the front page you should be able to fill in a username and an existing game code. This should redirect you to a game session with your username and a randomised bingo card consisting of the tiles that belong to that particular game.
+  - You should not be able to join a game that does not exist.
+  - You should not be able to join a game with any missing information (game code and username).
+- Playing the game:
+  - You should be able to select and unselect any tile. A selected tile should turn blue.
+  - When you have your first Bingo, confetti should show up and a "Bingo!" message should appear below the card.
+- Interacting with other players:
 
-## Learn More
+  - If there are other players in the same session, you should see their usernames below your card.
+  - You should be able to click on their names to display their unique bingo cards.
+  - You should be able to click on their names again to hide their bingo cards.
+  - You should be able to see their marked squares, highlighted in blue.
+  - If another player has a Bingo, their name should turn green and a "(Bingo!)" text should appear next to their name.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  ## Known bugs

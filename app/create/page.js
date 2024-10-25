@@ -14,7 +14,7 @@ export default function Create() {
 
   useEffect(() => {
     const initialSquares = Array.from({ length: 24 }, () => ({
-      text: 'bla',
+      text: '',
       isMarked: false,
     }));
     setBingoSquares(initialSquares);
