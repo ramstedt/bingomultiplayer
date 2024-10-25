@@ -29,9 +29,7 @@ export async function POST(req) {
       );
     }
 
-    const gameIdUpperCase = gameId.toUpperCase();
-
-    const gameRef = ref(db, `Games/${gameIdUpperCase}`);
+    const gameRef = ref(db, `Games/${gameId}`);
     const gameSnapshot = await get(gameRef);
 
     if (!gameSnapshot.exists()) {
@@ -62,14 +60,14 @@ export async function POST(req) {
 
     const playerData = {
       username: name,
-      gameId: gameIdUpperCase,
+      gameId: gameId,
       bingoCard: randomizedBingoCard,
       isWinner: false,
     };
 
     await set(ref(db, `Players/${playerId}`), playerData);
 
-    return new Response(JSON.stringify({ gameIdUpperCase, playerId }), {
+    return new Response(JSON.stringify({ gameId, playerId }), {
       status: 200,
     });
   } catch (error) {

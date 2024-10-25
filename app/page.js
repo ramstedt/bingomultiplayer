@@ -61,7 +61,7 @@ export default function Home() {
               name='code'
               placeholder='Enter game code'
               value={gameId}
-              onChange={(e) => setGameId(e.target.value)}
+              onChange={(e) => setGameId(e.target.value.toUpperCase())}
               required
             />
           </label>
