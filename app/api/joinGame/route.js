@@ -29,7 +29,7 @@ export async function POST(req) {
       );
     }
 
-    const gameRef = ref(db, `Games/${gameId}`);
+    const gameRef = ref(db, `Games/${gameId.toUpperCase()}`);
     const gameSnapshot = await get(gameRef);
 
     if (!gameSnapshot.exists()) {

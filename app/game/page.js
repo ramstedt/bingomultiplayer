@@ -1,10 +1,12 @@
 'use client';
+import styles from './game.module.css';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ref, onValue, off } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import BingoCard from '@/app/components/BingoCard/BingoCard';
 import Confetti from 'react-confetti';
+import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
@@ -82,8 +84,20 @@ export default function Game() {
     <div>
       {playerData ? (
         <div>
-          <p>Username: {playerData.currentPlayer.username}</p>
-          <p>Others can join this Bingo by entering the code: {gameId}</p>
+          <p className={styles.center}>
+            Others can join this Bingo by entering the code: <br />
+            <span className={styles.gameId}>{gameId}</span>
+          </p>
+          <br />
+          <p className={styles.gameDetails}>
+            <span className={styles.bold}>
+              Playing as:
+              <br />
+            </span>
+            <span className={styles.blue}>
+              {playerData.currentPlayer.username}
+            </span>
+          </p>
 
           <BingoCard
             cellContent={playerData.currentPlayer.bingoCard}
@@ -94,29 +108,35 @@ export default function Game() {
           {showConfetti && (
             <Confetti width={window.innerWidth} height={window.innerHeight} />
           )}
-          <h3>Other Players in this game:</h3>
-          <ul>
+          <h3 className={styles.subheader}>Other Players:</h3>
+          <ul className={styles.list}>
             {playerData.otherPlayers.map((player, index) => (
-              <li
-                key={index}
-                style={{ color: player.isWinner ? 'green' : 'black' }}
-              >
-                <span
-                  onClick={() => toggleBingoCard(index)}
-                  style={{ cursor: 'pointer' }}
+              <span key={index}>
+                <li
+                  style={{ color: player.isWinner ? 'green' : '' }}
+                  className={styles.player}
                 >
-                  {player.username} {player.isWinner && '(Bingo!)'}
-                </span>
-
+                  {visibleCardIndex === index ? (
+                    <IoChevronDown />
+                  ) : (
+                    <IoChevronForward />
+                  )}
+                  <span
+                    onClick={() => toggleBingoCard(index)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {player.username} {player.isWinner && '(Bingo!)'}
+                  </span>
+                </li>
                 {visibleCardIndex === index && (
                   <BingoCard cellContent={player.bingoCard} clickable={true} />
                 )}
-              </li>
+              </span>
             ))}
           </ul>
         </div>
       ) : (
-        <p>This game does not exist.</p>
+        <></>
       )}
     </div>
   );

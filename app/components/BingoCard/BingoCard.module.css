@@ -15,6 +15,7 @@
   justify-content: center;
   align-items: center;
   border: 2px solid #000;
+  background: #151517;
   font-size: calc(3vw);
   font-weight: bold;
   cursor: pointer;
@@ -35,7 +36,7 @@
 }
 
 .marked {
-  background-color: #4b79e3;
+  background: #4b79e3;
   color: rgb(18, 18, 18);
 }
 

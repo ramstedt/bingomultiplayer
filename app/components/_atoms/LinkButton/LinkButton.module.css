@@ -1,0 +1,27 @@
+.wrapper {
+  background: rgb(43, 131, 232);
+  height: 2rem;
+  width: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.styledLink {
+  background: rgb(43, 131, 232);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+}
+.styledLink:hover {
+  background: rgb(24, 93, 158);
+}

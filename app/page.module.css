@@ -1,9 +1,15 @@
 .joinForm {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.7rem;
+  min-width: 160px;
+  margin-top: 1rem;
 }
 .joinForm > *,
 .joinForm input {
   width: 100%;
+}
+
+.joinForm input {
+  height: 1.5rem;
 }
