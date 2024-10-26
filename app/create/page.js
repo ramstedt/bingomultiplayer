@@ -1,21 +1,21 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import BingoCard from '../components/BingoCard/BingoCard';
-import styles from './create.module.css';
-import LinkButton from '../components/_atoms/LinkButton/LinkButton';
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import BingoCard from "../components/BingoCard/BingoCard";
+import styles from "./create.module.css";
+import LinkButton from "../components/_atoms/LinkButton/LinkButton";
 
 export default function Create() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [bingoSquares, setBingoSquares] = useState(
-    Array.from({ length: 24 }, () => ({ text: '', isMarked: false }))
+    Array.from({ length: 24 }, () => ({ text: "", isMarked: false }))
   );
   const [createdGame, setCreatedGame] = useState(null);
 
   useEffect(() => {
     const initialSquares = Array.from({ length: 24 }, () => ({
-      text: '',
+      text: "",
       isMarked: false,
     }));
     setBingoSquares(initialSquares);
@@ -36,10 +36,10 @@ export default function Create() {
     };
 
     try {
-      const response = await fetch('/api/createGame', {
-        method: 'POST',
+      const response = await fetch("/api/createGame", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -52,16 +52,16 @@ export default function Create() {
           `/game?gameId=${result.gameId}&playerId=${result.playerId}`
         );
       } else {
-        console.error('Error creating game:', result.error);
+        console.error("Error creating game:", result.error);
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
     }
   };
 
   const preparePreview = () => {
     const previewSquares = [...bingoSquares];
-    previewSquares.splice(12, 0, { text: 'Free', isMarked: false });
+    previewSquares.splice(12, 0, { text: "Free", isMarked: false });
     return previewSquares;
   };
 
@@ -75,7 +75,7 @@ export default function Create() {
           {bingoSquares.map((square, index) => (
             <input
               key={index}
-              type='text'
+              type="text"
               name={`square${index + 1}`}
               placeholder={`Square ${index + 1}`}
               value={square.text}
@@ -85,18 +85,20 @@ export default function Create() {
           ))}
         </div>
         <br />
-        <label htmlFor='username'>Username:</label>
+        <label htmlFor="username">Username:</label>
         <input
-          type='text'
-          id='username'
-          name='username'
-          placeholder='Enter your username'
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Enter your username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
+          maxLength="10"
+          minLength="3"
         />
         <br />
-        <LinkButton isButton={true} text='Create Game' />
+        <LinkButton isButton={true} text="Create Game" />
         <br />
       </form>
 
