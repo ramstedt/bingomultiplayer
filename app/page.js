@@ -68,7 +68,7 @@ export default function Home() {
             />
           </label>
         </div>
-        <LinkButton isButton={true} text="Join Game" />
+        <LinkButton isButton={true} buttonType="submit" text="Join Game" />
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
       <br />

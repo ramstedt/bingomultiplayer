@@ -1,12 +1,22 @@
-'use client';
-import styles from './LinkButton.module.css';
-import Link from 'next/link';
+"use client";
+import styles from "./LinkButton.module.css";
+import Link from "next/link";
 
-export default function LinkButton({ text, href, isButton }) {
+export default function LinkButton({
+  text,
+  href,
+  isButton,
+  buttonType,
+  onClick,
+}) {
   if (isButton) {
     return (
       <div className={styles.wrapper}>
-        <button className={styles.styledLink} type='submit'>
+        <button
+          className={styles.styledLink}
+          type={buttonType}
+          onClick={onClick}
+        >
           {text}
         </button>
       </div>

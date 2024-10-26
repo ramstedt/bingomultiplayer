@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BingoCard from "../components/BingoCard/BingoCard";
 import styles from "./create.module.css";
@@ -9,17 +9,10 @@ export default function Create() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [bingoSquares, setBingoSquares] = useState(
-    Array.from({ length: 24 }, () => ({ text: "", isMarked: false }))
+    Array.from({ length: 60 }, () => ({ text: "", isMarked: false }))
   );
   const [createdGame, setCreatedGame] = useState(null);
-
-  useEffect(() => {
-    const initialSquares = Array.from({ length: 24 }, () => ({
-      text: "",
-      isMarked: false,
-    }));
-    setBingoSquares(initialSquares);
-  }, []);
+  const [visibleSquares, setVisibleSquares] = useState(1);
 
   const handleSquareChange = (index, value) => {
     const updatedSquares = [...bingoSquares];
@@ -27,12 +20,18 @@ export default function Create() {
     setBingoSquares(updatedSquares);
   };
 
+  const revealNextSquare = () => {
+    if (visibleSquares < 60) {
+      setVisibleSquares((prev) => prev + 1);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const formData = {
       username,
-      bingoCard: bingoSquares,
+      bingoCard: bingoSquares.slice(0, visibleSquares),
     };
 
     try {
@@ -60,8 +59,13 @@ export default function Create() {
   };
 
   const preparePreview = () => {
-    const previewSquares = [...bingoSquares];
-    previewSquares.splice(12, 0, { text: "Free", isMarked: false });
+    let previewSquares = [...bingoSquares.slice(0, visibleSquares)];
+
+    while (previewSquares.length < 25) {
+      previewSquares.push({ text: "", isMarked: false });
+    }
+    previewSquares.splice(12, 1, { text: "Free", isMarked: false });
+
     return previewSquares;
   };
 
@@ -70,9 +74,13 @@ export default function Create() {
       <h1>Create Game</h1>
       <form className={styles.createGameForm} onSubmit={handleSubmit}>
         <br />
-        <label>Bingo Squares:</label>
+        <label>
+          Bingo Squares:
+          <br />
+          <small>Enter at least 24 and a maximum of 60 squares</small>
+        </label>
         <div className={styles.squareInputs}>
-          {bingoSquares.map((square, index) => (
+          {bingoSquares.slice(0, visibleSquares).map((square, index) => (
             <input
               key={index}
               type="text"
@@ -84,6 +92,15 @@ export default function Create() {
             />
           ))}
         </div>
+        {visibleSquares < 60 && (
+          <LinkButton
+            isButton={true}
+            buttonType="button"
+            onClick={revealNextSquare}
+            text="Add Square"
+          />
+        )}
+
         <br />
         <label htmlFor="username">Username:</label>
         <input
@@ -98,7 +115,7 @@ export default function Create() {
           minLength="3"
         />
         <br />
-        <LinkButton isButton={true} text="Create Game" />
+        <LinkButton isButton={true} text="Create Game" buttonType="submit" />
         <br />
       </form>
 
