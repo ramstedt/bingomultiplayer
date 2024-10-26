@@ -8,6 +8,7 @@ export default function LinkButton({
   isButton,
   buttonType,
   onClick,
+  disabled,
 }) {
   if (isButton) {
     return (
@@ -16,6 +17,7 @@ export default function LinkButton({
           className={styles.styledLink}
           type={buttonType}
           onClick={onClick}
+          disabled={disabled}
         >
           {text}
         </button>

@@ -8,11 +8,13 @@ export default function Home() {
   const [name, setName] = useState("");
   const [gameId, setGameId] = useState("");
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     try {
       const response = await fetch("/api/joinGame", {
@@ -32,6 +34,8 @@ export default function Home() {
       }
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,7 +72,13 @@ export default function Home() {
             />
           </label>
         </div>
-        <LinkButton isButton={true} buttonType="submit" text="Join Game" />
+        <LinkButton
+          isButton={true}
+          buttonType="submit"
+          text={isLoading ? "Joining..." : "Join Game"}
+          onClick={handleSubmit}
+          disabled={isLoading}
+        />
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
       <br />

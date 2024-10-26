@@ -13,6 +13,7 @@ export default function Create() {
   );
   const [createdGame, setCreatedGame] = useState(null);
   const [visibleSquares, setVisibleSquares] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSquareChange = (index, value) => {
     const updatedSquares = [...bingoSquares];
@@ -28,6 +29,7 @@ export default function Create() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const formData = {
       username,
@@ -55,6 +57,8 @@ export default function Create() {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -115,7 +119,13 @@ export default function Create() {
           minLength="3"
         />
         <br />
-        <LinkButton isButton={true} text="Create Game" buttonType="submit" />
+        <LinkButton
+          isButton={true}
+          text={isLoading ? "Creating..." : "Create Game"}
+          buttonType="submit"
+          onClick={handleSubmit}
+          disabled={isLoading}
+        />
         <br />
       </form>
 
