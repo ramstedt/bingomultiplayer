@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase';
 import BingoCard from '@/app/components/BingoCard/BingoCard';
 import Confetti from 'react-confetti';
 import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
+import Kofi from '../components/Kofi/Kofi';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
@@ -158,6 +159,7 @@ function GameContent({
       ) : (
         <></>
       )}
+      <Kofi />
     </div>
   );
 }

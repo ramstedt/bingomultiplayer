@@ -1,15 +1,16 @@
-"use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import BingoCard from "../components/BingoCard/BingoCard";
-import styles from "./create.module.css";
-import LinkButton from "../components/_atoms/LinkButton/LinkButton";
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import BingoCard from '../components/BingoCard/BingoCard';
+import styles from './create.module.css';
+import LinkButton from '../components/_atoms/LinkButton/LinkButton';
+import Kofi from '../components/Kofi/Kofi';
 
 export default function Create() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
   const [bingoSquares, setBingoSquares] = useState(
-    Array.from({ length: 60 }, () => ({ text: "", isMarked: false }))
+    Array.from({ length: 60 }, () => ({ text: '', isMarked: false }))
   );
   const [createdGame, setCreatedGame] = useState(null);
   const [visibleSquares, setVisibleSquares] = useState(1);
@@ -37,10 +38,10 @@ export default function Create() {
     };
 
     try {
-      const response = await fetch("/api/createGame", {
-        method: "POST",
+      const response = await fetch('/api/createGame', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
@@ -53,10 +54,10 @@ export default function Create() {
           `/game?gameId=${result.gameId}&playerId=${result.playerId}`
         );
       } else {
-        console.error("Error creating game:", result.error);
+        console.error('Error creating game:', result.error);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error('Error submitting form:', error);
     } finally {
       setIsLoading(false);
     }
@@ -66,9 +67,9 @@ export default function Create() {
     let previewSquares = [...bingoSquares.slice(0, visibleSquares)];
 
     while (previewSquares.length < 25) {
-      previewSquares.push({ text: "", isMarked: false });
+      previewSquares.push({ text: '', isMarked: false });
     }
-    previewSquares.splice(12, 1, { text: "Free", isMarked: false });
+    previewSquares.splice(12, 1, { text: 'Free', isMarked: false });
 
     return previewSquares;
   };
@@ -87,7 +88,7 @@ export default function Create() {
           {bingoSquares.slice(0, visibleSquares).map((square, index) => (
             <input
               key={index}
-              type="text"
+              type='text'
               name={`square${index + 1}`}
               placeholder={`Square ${index + 1}`}
               value={square.text}
@@ -99,30 +100,30 @@ export default function Create() {
         {visibleSquares < 60 && (
           <LinkButton
             isButton={true}
-            buttonType="button"
+            buttonType='button'
             onClick={revealNextSquare}
-            text="Add Square"
+            text='Add Square'
           />
         )}
 
         <br />
-        <label htmlFor="username">Username:</label>
+        <label htmlFor='username'>Username:</label>
         <input
-          type="text"
-          id="username"
-          name="username"
-          placeholder="Enter your username"
+          type='text'
+          id='username'
+          name='username'
+          placeholder='Enter your username'
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
-          maxLength="10"
-          minLength="3"
+          maxLength='10'
+          minLength='3'
         />
         <br />
         <LinkButton
           isButton={true}
-          text={isLoading ? "Creating..." : "Create Game"}
-          buttonType="submit"
+          text={isLoading ? 'Creating...' : 'Create Game'}
+          buttonType='submit'
           onClick={handleSubmit}
           disabled={isLoading}
         />
@@ -134,6 +135,7 @@ export default function Create() {
         (Note: when players join the game, their bingo card will be randomised)
       </p>
       <BingoCard cellContent={preparePreview()} clickable={false} />
+      <Kofi />
     </>
   );
 }
