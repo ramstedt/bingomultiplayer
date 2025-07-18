@@ -8,6 +8,7 @@ import BingoCard from '@/app/components/BingoCard/BingoCard';
 import Confetti from 'react-confetti';
 import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
 import Kofi from '../components/Kofi/Kofi';
+import { IoCopy } from 'react-icons/io5';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
@@ -108,6 +109,29 @@ function GameContent({
           <p className={styles.center}>
             Others can join this Bingo by entering the code: <br />
             <span className={styles.gameId}>{gameId}</span>
+            <br />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>
+                Join my bingo game at https://multiplayerbingo.vercel.app ! Use
+                code: {gameId}
+              </span>
+              <IoCopy
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `Join my bingo game at https://multiplayerbingo.vercel.app Use code: ${gameId}`
+                  )
+                }
+                style={{ cursor: 'pointer' }}
+                title='Copy to clipboard'
+              />
+            </div>
           </p>
           <br />
           <p className={styles.gameDetails}>

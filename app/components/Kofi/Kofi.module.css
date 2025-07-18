@@ -1,4 +1,6 @@
 .kofi {
   background: none;
-  margin: 1rem 0px 1rem 0px;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 }

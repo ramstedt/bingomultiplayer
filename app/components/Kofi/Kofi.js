@@ -5,7 +5,7 @@ import styles from './Kofi.module.css';
 const Kofi = () => {
   return (
     <Link
-      href='https://ko-fi.com/catface404'
+      href='https://ko-fi.com/catstasis'
       target='_blank'
       className={styles.kofi}
     >
