@@ -14,6 +14,11 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Stack
+- Next.js
+- Node.js
+- Firebase
+
 ## QA testing instructions
 
 The application is mobile-first and should work on any device and any size screen.
