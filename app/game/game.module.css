@@ -36,6 +36,7 @@
   background: #2e2f30;
   border-radius: 10px;
   overflow: hidden;
+  contain: paint;
 }
 
 .playerRow {
@@ -73,6 +74,17 @@
   font-size: 0.95rem;
 }
 
+.closeBadge {
+  background: #7a4f00;
+  color: #ffd580;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
 .winnerBadge {
   background: #2e7d32;
   color: #a5d6a7;
@@ -90,8 +102,13 @@
 }
 
 .expandedCard {
-  padding: 0.75rem 0.5rem;
+  padding: 0.5rem;
   border-top: 1px solid #3a3b3c;
+  overflow: hidden;
+}
+
+.expandedCard > div > div {
+  width: 100% !important;
 }
 
 .bold {

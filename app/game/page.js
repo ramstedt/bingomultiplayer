@@ -1,6 +1,28 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { colorFromUsername } from '@/lib/playerColors';
+
+const minSquaresAwayFromBingo = (bingoCard) => {
+  if (!bingoCard || bingoCard.length < 25) return null;
+  const g = 5;
+  const marked = (r, c) => bingoCard[r * g + c].isMarked;
+  let min = Infinity;
+  for (let i = 0; i < g; i++) {
+    let rowMissing = 0, colMissing = 0;
+    for (let j = 0; j < g; j++) {
+      if (!marked(i, j)) rowMissing++;
+      if (!marked(j, i)) colMissing++;
+    }
+    min = Math.min(min, rowMissing, colMissing);
+  }
+  let d1 = 0, d2 = 0;
+  for (let i = 0; i < g; i++) {
+    if (!marked(i, i)) d1++;
+    if (!marked(i, g - 1 - i)) d2++;
+  }
+  min = Math.min(min, d1, d2);
+  return min;
+};
 import { useSearchParams } from 'next/navigation';
 import styles from './game.module.css';
 import { ref, onValue } from 'firebase/database';
@@ -237,9 +259,14 @@ function GameContent({
                       {player.username[0].toUpperCase()}
                     </span>
                     <span className={styles.playerName}>{player.username}</span>
-                    {player.isWinner && (
+                    {player.isWinner ? (
                       <span className={styles.winnerBadge}>Bingo!</span>
-                    )}
+                    ) : (() => {
+                      const away = minSquaresAwayFromBingo(player.bingoCard);
+                      if (away === 1) return <span className={styles.closeBadge}>1 away</span>;
+                      if (away === 2) return <span className={styles.closeBadge}>2 away</span>;
+                      return null;
+                    })()}
                     <span className={styles.chevron}>
                       {visibleCardIndex === index ? (
                         <IoChevronDown />
