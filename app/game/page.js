@@ -2,7 +2,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styles from './game.module.css';
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import BingoCard from '@/app/components/BingoCard/BingoCard';
 import Confetti from 'react-confetti';
@@ -92,7 +92,7 @@ function GameContent({
         setPlayerData(null);
       }
     });
-    return () => off(playersRef, 'value', unsubscribe);
+    return unsubscribe;
   }, [gameId, playerId]);
 
   useEffect(() => {
@@ -108,7 +108,16 @@ function GameContent({
         <div>
           <p className={styles.center}>
             Others can join this Bingo by entering the code: <br />
-            <span className={styles.gameId}>{gameId}</span>
+            <span className={styles.gameId}>{gameId}</span>{' '}
+            <IoCopy
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `Join my bingo game at https://multiplayerbingo.vercel.app Use code: ${gameId}`,
+                )
+              }
+              style={{ cursor: 'pointer' }}
+              title='Copy to clipboard'
+            />
             <br />
             <div
               style={{
@@ -117,21 +126,7 @@ function GameContent({
                 justifyContent: 'center',
                 gap: '8px',
               }}
-            >
-              <span>
-                Join my bingo game at https://multiplayerbingo.vercel.app ! Use
-                code: {gameId}
-              </span>
-              <IoCopy
-                onClick={() =>
-                  navigator.clipboard.writeText(
-                    `Join my bingo game at https://multiplayerbingo.vercel.app Use code: ${gameId}`
-                  )
-                }
-                style={{ cursor: 'pointer' }}
-                title='Copy to clipboard'
-              />
-            </div>
+            ></div>
           </p>
           <br />
           <p className={styles.gameDetails}>
@@ -150,7 +145,7 @@ function GameContent({
             playerId={playerId}
             clickable={true}
           />
-          {showConfetti && (
+          {showConfetti && typeof window !== 'undefined' && (
             <Confetti width={window.innerWidth} height={window.innerHeight} />
           )}
           <h3 className={styles.subheader}>Other Players:</h3>
@@ -174,7 +169,7 @@ function GameContent({
                   </span>
                 </li>
                 {visibleCardIndex === index && (
-                  <BingoCard cellContent={player.bingoCard} clickable={true} />
+                  <BingoCard cellContent={player.bingoCard} clickable={false} />
                 )}
               </span>
             ))}

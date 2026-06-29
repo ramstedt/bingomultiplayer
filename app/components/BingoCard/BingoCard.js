@@ -4,13 +4,12 @@ import styles from './BingoCard.module.css';
 import { CiStar } from 'react-icons/ci';
 
 const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
-  const initialMarkedGrid = Array(5)
-    .fill(null)
-    .map(() => Array(5).fill(false));
-
   const [grid, setGrid] = useState([]);
-  const [markedGrid, setMarkedGrid] = useState(initialMarkedGrid);
+  const [markedGrid, setMarkedGrid] = useState(() =>
+    Array(5).fill(null).map(() => Array(5).fill(false))
+  );
   const [bingoStatus, setBingoStatus] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     if (Array.isArray(cellContent) && cellContent.length >= 24) {
@@ -46,11 +45,12 @@ const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
   }, [cellContent]);
 
   const handleCellClick = async (rowIndex, colIndex) => {
-    if (!clickable) {
+    if (!clickable || isUpdating) {
       return;
     }
     const cellIndex = rowIndex * 5 + colIndex;
 
+    setIsUpdating(true);
     try {
       const response = await fetch('/api/updateSquare', {
         method: 'POST',
@@ -82,6 +82,8 @@ const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
       setMarkedGrid(updatedMarkedGrid);
     } catch (error) {
       console.error('Error toggling square or checking bingo:', error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 

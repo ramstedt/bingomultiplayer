@@ -22,31 +22,35 @@ export async function POST(req) {
 
     const games = snapshot.val();
     const gamesToDelete = [];
-    const playersToDelete = [];
 
     Object.keys(games).forEach((gameId) => {
       const game = games[gameId];
       if (isGameOlderThan30Days(game.creationDate)) {
         gamesToDelete.push(gameId);
-        playersToDelete.push(game.creatorPlayerId);
       }
     });
 
     if (gamesToDelete.length > 0) {
+      const staleGameIds = new Set(gamesToDelete);
       const gameDeletePromises = gamesToDelete.map((gameId) =>
         remove(ref(db, `Games/${gameId}`))
       );
 
-      const uniquePlayersToDelete = [...new Set(playersToDelete)];
-      const playerDeletePromises = uniquePlayersToDelete.map((playerId) =>
-        remove(ref(db, `Players/${playerId}`))
-      );
+      const playersSnapshot = await get(ref(db, 'Players'));
+      const playerDeletePromises = [];
+      if (playersSnapshot.exists()) {
+        playersSnapshot.forEach((child) => {
+          if (staleGameIds.has(child.val().gameId)) {
+            playerDeletePromises.push(remove(ref(db, `Players/${child.key}`)));
+          }
+        });
+      }
 
       await Promise.all([...gameDeletePromises, ...playerDeletePromises]);
 
       return new Response(
         JSON.stringify({
-          message: `${gamesToDelete.length} game(s) deleted. ${uniquePlayersToDelete.length} player(s) associated with those games were also deleted.`,
+          message: `${gamesToDelete.length} game(s) deleted. ${playerDeletePromises.length} player(s) associated with those games were also deleted.`,
         }),
         { status: 200 }
       );
