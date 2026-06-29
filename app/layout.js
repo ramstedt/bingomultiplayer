@@ -6,7 +6,7 @@ const rethinkSans = Rethink_Sans({
 });
 
 export const metadata = {
-  title: 'Multiplayer Bingo by Catface',
+  title: 'Multiplayer Bingo by Catastasia',
   description:
     'Create your own bingo card and share it with your friends. Real time updates!',
 };

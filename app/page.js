@@ -43,7 +43,7 @@ export default function Home() {
   return (
     <>
       <h1>MultiPlayer Bingo</h1>
-      <h3>Created by Catface</h3>
+      <h3>Created by Catastasia</h3>
       <form className={styles.joinForm} onSubmit={handleSubmit}>
         <div>
           <label htmlFor='name'>
