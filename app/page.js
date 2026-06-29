@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LinkButton from './components/_atoms/LinkButton/LinkButton';
 import styles from './page.module.css';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,16 @@ export default function Home() {
   const [gameId, setGameId] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [savedGame, setSavedGame] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedGameId = localStorage.getItem('bingo_gameId');
+    const savedPlayerId = localStorage.getItem('bingo_playerId');
+    if (savedGameId && savedPlayerId) {
+      setSavedGame({ gameId: savedGameId, playerId: savedPlayerId });
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -29,6 +38,8 @@ export default function Home() {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem('bingo_gameId', data.gameId);
+        localStorage.setItem('bingo_playerId', data.playerId);
         router.push(`/game?gameId=${data.gameId}&playerId=${data.playerId}`);
       } else {
         setError(data.error || 'Failed to join the game. Please try again.');
@@ -43,6 +54,27 @@ export default function Home() {
   return (
     <>
       <h1>MultiPlayer Bingo</h1>
+      {savedGame && (
+        <div className={styles.rejoinBanner}>
+          <span>You were in game <strong>{savedGame.gameId}</strong></span>
+          <button
+            className={styles.rejoinButton}
+            onClick={() => router.push(`/game?gameId=${savedGame.gameId}&playerId=${savedGame.playerId}`)}
+          >
+            Rejoin
+          </button>
+          <button
+            className={styles.dismissButton}
+            onClick={() => {
+              localStorage.removeItem('bingo_gameId');
+              localStorage.removeItem('bingo_playerId');
+              setSavedGame(null);
+            }}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <h3>Created by Catastasia</h3>
       <form className={styles.joinForm} onSubmit={handleSubmit}>
         <div>

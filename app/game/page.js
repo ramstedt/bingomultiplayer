@@ -9,11 +9,13 @@ import Confetti from 'react-confetti';
 import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
 import Kofi from '../components/Kofi/Kofi';
 import { IoCopy } from 'react-icons/io5';
+import { useRouter } from 'next/navigation';
 
 export default function Game() {
   const [playerData, setPlayerData] = useState(null);
   const [visibleCardIndex, setVisibleCardIndex] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
 
   const toggleBingoCard = (index) => {
     setVisibleCardIndex((prevIndex) => (prevIndex === index ? null : index));
@@ -28,6 +30,8 @@ export default function Game() {
         visibleCardIndex={visibleCardIndex}
         showConfetti={showConfetti}
         setShowConfetti={setShowConfetti}
+        showLeaveModal={showLeaveModal}
+        setShowLeaveModal={setShowLeaveModal}
       />
     </Suspense>
   );
@@ -40,10 +44,24 @@ function GameContent({
   visibleCardIndex,
   showConfetti,
   setShowConfetti,
+  showLeaveModal,
+  setShowLeaveModal,
 }) {
   const searchParams = useSearchParams();
   const gameId = searchParams.get('gameId');
   const playerId = searchParams.get('playerId');
+  const router = useRouter();
+
+  const handleLeaveGame = async () => {
+    await fetch('/api/leaveGame', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerId }),
+    });
+    localStorage.removeItem('bingo_gameId');
+    localStorage.removeItem('bingo_playerId');
+    router.push('/');
+  };
 
   useEffect(() => {
     if (!gameId || !playerId) return;
@@ -147,6 +165,37 @@ function GameContent({
           />
           {showConfetti && typeof window !== 'undefined' && (
             <Confetti width={window.innerWidth} height={window.innerHeight} />
+          )}
+          <button
+            onClick={() => setShowLeaveModal(true)}
+            className={styles.leaveButton}
+          >
+            Leave Game
+          </button>
+          {showLeaveModal && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.modal}>
+                <p>
+                  Are you sure you want to leave the game?
+                  <br />
+                  Your bingo card will be deleted.
+                </p>
+                <div className={styles.modalButtons}>
+                  <button
+                    onClick={handleLeaveGame}
+                    className={styles.modalConfirm}
+                  >
+                    Leave
+                  </button>
+                  <button
+                    onClick={() => setShowLeaveModal(false)}
+                    className={styles.modalCancel}
+                  >
+                    Stay
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
           <h3 className={styles.subheader}>Other Players:</h3>
           <ul className={styles.list}>

@@ -50,6 +50,13 @@ const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
     }
     const cellIndex = rowIndex * 5 + colIndex;
 
+    // Optimistic update — flip immediately so the UI feels instant
+    const prevMarkedGrid = markedGrid.map((r) => [...r]);
+    const prevGrid = grid.map((r) => [...r]);
+    const optimisticMarked = markedGrid.map((r) => [...r]);
+    optimisticMarked[rowIndex][colIndex] = !optimisticMarked[rowIndex][colIndex];
+    setMarkedGrid(optimisticMarked);
+
     setIsUpdating(true);
     try {
       const response = await fetch('/api/updateSquare', {
@@ -75,13 +82,12 @@ const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
         .map((_, rowIndex) => bingoCard.slice(rowIndex * 5, rowIndex * 5 + 5));
 
       setGrid(updatedGrid);
-
-      const updatedMarkedGrid = updatedGrid.map((row) =>
-        row.map((cell) => cell.isMarked)
-      );
-      setMarkedGrid(updatedMarkedGrid);
+      setMarkedGrid(updatedGrid.map((row) => row.map((cell) => cell.isMarked)));
     } catch (error) {
       console.error('Error toggling square or checking bingo:', error);
+      // Revert optimistic update on failure
+      setGrid(prevGrid);
+      setMarkedGrid(prevMarkedGrid);
     } finally {
       setIsUpdating(false);
     }

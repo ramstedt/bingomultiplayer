@@ -50,6 +50,8 @@ export default function Create() {
 
       if (response.ok) {
         setCreatedGame(result);
+        localStorage.setItem('bingo_gameId', result.gameId);
+        localStorage.setItem('bingo_playerId', result.playerId);
         router.push(
           `/game?gameId=${result.gameId}&playerId=${result.playerId}`
         );
