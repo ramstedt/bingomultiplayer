@@ -1,22 +1,19 @@
 .bingoCard {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  gap: 5px;
+  gap: 3px;
   margin: 0 auto;
-  width: 95vw;
-  height: 95vw;
-  max-width: 500px;
-  max-height: 500px;
+  width: min(100vw, 500px);
+  aspect-ratio: 1 / 1;
 }
 
 .cell {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #000;
+  border: 1px solid #000;
   background: #151517;
-  font-size: calc(3vw);
+  font-size: clamp(8px, 2.8vw, 14px);
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -24,15 +21,9 @@
   overflow-wrap: break-word;
   text-align: center;
   line-height: 1.1;
-  width: 100%;
-  aspect-ratio: 1 / 1;
+  padding: 2px;
   overflow: hidden;
-}
-
-@media (min-width: 500px) {
-  .cell {
-    font-size: clamp(12px, 2.5vw, 15px);
-  }
+  aspect-ratio: 1 / 1;
 }
 
 .marked {

@@ -1,12 +1,13 @@
 .wrapper {
   background: rgb(43, 131, 232);
-  height: 2rem;
-  width: 10rem;
+  min-height: 2.75rem;
+  width: 100%;
+  max-width: 16rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
 }
 

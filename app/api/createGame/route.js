@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import { ref, get, child, set } from "firebase/database";
+import { pickColor } from "@/lib/playerColors";
 
 const generateGameID = () => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -84,6 +85,7 @@ export async function POST(req) {
     const playerId = await generateUniquePlayerID();
     const gameId = await generateUniqueGameID();
     const creationDate = new Date().toISOString();
+    const color = pickColor([]);
 
     await set(ref(db, `Games/${gameId}`), {
       bingoSquares: gameCard,
@@ -96,6 +98,7 @@ export async function POST(req) {
       gameId,
       bingoCard: playerCard,
       isWinner: false,
+      color,
     });
 
     return NextResponse.json(

@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
+import { colorFromUsername } from '@/lib/playerColors';
 import { useSearchParams } from 'next/navigation';
 import styles from './game.module.css';
 import { ref, onValue } from 'firebase/database';
@@ -83,12 +84,14 @@ function GameContent({
                 username: playerData.username,
                 isWinner: playerData.isWinner,
                 bingoCard: playerData.bingoCard || [],
+                color: playerData.color,
               };
             } else {
               players.push({
                 username: playerData.username,
                 isWinner: playerData.isWinner,
                 bingoCard: playerData.bingoCard || [],
+                color: playerData.color,
               });
             }
           }
@@ -152,7 +155,14 @@ function GameContent({
               Playing as:
               <br />
             </span>
-            <span className={styles.blue}>
+            <span
+              style={{
+                color:
+                  playerData.currentPlayer.color ||
+                  colorFromUsername(playerData.currentPlayer.username),
+                fontWeight: 700,
+              }}
+            >
               {playerData.currentPlayer.username}
             </span>
           </p>
@@ -162,6 +172,10 @@ function GameContent({
             gameId={gameId}
             playerId={playerId}
             clickable={true}
+            markedColor={
+              playerData.currentPlayer.color ||
+              colorFromUsername(playerData.currentPlayer.username)
+            }
           />
           {showConfetti && typeof window !== 'undefined' && (
             <Confetti width={window.innerWidth} height={window.innerHeight} />
@@ -178,7 +192,7 @@ function GameContent({
                 <p>
                   Are you sure you want to leave the game?
                   <br />
-                  Your bingo card will be deleted.
+                  Your bingo card will be lost.
                 </p>
                 <div className={styles.modalButtons}>
                   <button
@@ -197,32 +211,58 @@ function GameContent({
               </div>
             </div>
           )}
-          <h3 className={styles.subheader}>Other Players:</h3>
-          <ul className={styles.list}>
-            {playerData.otherPlayers.map((player, index) => (
-              <span key={index}>
-                <li
-                  style={{ color: player.isWinner ? 'green' : '' }}
-                  className={styles.player}
-                >
-                  {visibleCardIndex === index ? (
-                    <IoChevronDown />
-                  ) : (
-                    <IoChevronForward />
-                  )}
-                  <span
+          <h3 className={styles.subheader}>
+            Other Players
+            <span className={styles.playerCount}>
+              {playerData.otherPlayers.length}
+            </span>
+          </h3>
+          {playerData.otherPlayers.length === 0 ? (
+            <p className={styles.noPlayers}>No one else has joined yet</p>
+          ) : (
+            <ul className={styles.list}>
+              {playerData.otherPlayers.map((player, index) => (
+                <li key={index} className={styles.playerCard}>
+                  <button
+                    className={styles.playerRow}
                     onClick={() => toggleBingoCard(index)}
-                    style={{ cursor: 'pointer' }}
                   >
-                    {player.username} {player.isWinner && '(Bingo!)'}
-                  </span>
+                    <span
+                      className={styles.avatar}
+                      style={{
+                        background:
+                          player.color || colorFromUsername(player.username),
+                      }}
+                    >
+                      {player.username[0].toUpperCase()}
+                    </span>
+                    <span className={styles.playerName}>{player.username}</span>
+                    {player.isWinner && (
+                      <span className={styles.winnerBadge}>Bingo!</span>
+                    )}
+                    <span className={styles.chevron}>
+                      {visibleCardIndex === index ? (
+                        <IoChevronDown />
+                      ) : (
+                        <IoChevronForward />
+                      )}
+                    </span>
+                  </button>
+                  {visibleCardIndex === index && (
+                    <div className={styles.expandedCard}>
+                      <BingoCard
+                        cellContent={player.bingoCard}
+                        clickable={false}
+                        markedColor={
+                          player.color || colorFromUsername(player.username)
+                        }
+                      />
+                    </div>
+                  )}
                 </li>
-                {visibleCardIndex === index && (
-                  <BingoCard cellContent={player.bingoCard} clickable={false} />
-                )}
-              </span>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          )}
         </div>
       ) : (
         <></>

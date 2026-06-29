@@ -1,5 +1,6 @@
 import { db } from "@/lib/firebase";
 import { ref, get, set } from "firebase/database";
+import { pickColor } from "@/lib/playerColors";
 
 const generatePlayerID = () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -43,6 +44,23 @@ export async function POST(req) {
       });
     }
 
+    const playersSnapshot = await get(ref(db, 'Players'));
+    const usedColors = [];
+    if (playersSnapshot.exists()) {
+      const allPlayers = Object.values(playersSnapshot.val());
+      const usernameTaken = allPlayers.some(
+        (p) => p.gameId === gameId && p.username.toLowerCase() === name.toLowerCase()
+      );
+      if (usernameTaken) {
+        return new Response(
+          JSON.stringify({ error: "That username is already taken in this game." }),
+          { status: 409 }
+        );
+      }
+      allPlayers.filter((p) => p.gameId === gameId && p.color).forEach((p) => usedColors.push(p.color));
+    }
+    const color = pickColor(usedColors);
+
     let playerId;
     let playerExists = true;
 
@@ -68,6 +86,7 @@ export async function POST(req) {
       gameId: gameId,
       bingoCard: selectedSquares,
       isWinner: false,
+      color,
     };
 
     await set(ref(db, `Players/${playerId}`), playerData);

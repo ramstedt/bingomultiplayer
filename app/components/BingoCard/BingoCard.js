@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import styles from './BingoCard.module.css';
 import { CiStar } from 'react-icons/ci';
 
-const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
+const BingoCard = ({ cellContent, playerId, gameId, clickable, markedColor }) => {
   const [grid, setGrid] = useState([]);
   const [markedGrid, setMarkedGrid] = useState(() =>
     Array(5).fill(null).map(() => Array(5).fill(false))
@@ -100,9 +100,8 @@ const BingoCard = ({ cellContent, playerId, gameId, clickable }) => {
           row.map((cell, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
-              className={`${styles.cell} ${
-                markedGrid[rowIndex][colIndex] ? styles.marked : ''
-              }`}
+              className={`${styles.cell} ${markedGrid[rowIndex][colIndex] ? styles.marked : ''}`}
+              style={markedGrid[rowIndex][colIndex] && markedColor ? { background: markedColor } : {}}
               onPointerUp={() => handleCellClick(rowIndex, colIndex)}
             >
               {rowIndex === 2 && colIndex === 2 ? (
