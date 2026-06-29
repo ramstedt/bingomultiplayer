@@ -130,6 +130,10 @@ function GameContent({
             },
             otherPlayers: players,
           });
+        } else {
+          setPlayerData((prev) =>
+            prev ? { ...prev, otherPlayers: players } : null
+          );
         }
       } else {
         setPlayerData(null);
