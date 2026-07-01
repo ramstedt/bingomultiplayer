@@ -5,37 +5,43 @@
   margin: 0 auto;
   width: min(100vw, 500px);
   aspect-ratio: 1 / 1;
+  background: var(--cell-border);
 }
 
 .cell {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #000;
-  background: #151517;
+  background: var(--cell-bg);
+  color: var(--text-primary);
   font-size: clamp(8px, 2.8vw, 14px);
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.15s ease;
   word-wrap: break-word;
   overflow-wrap: break-word;
   text-align: center;
-  line-height: 1.1;
+  line-height: 1.15;
   padding: 2px;
   overflow: hidden;
   aspect-ratio: 1 / 1;
 }
 
+.cell:active {
+  opacity: 0.8;
+}
+
 .marked {
-  background: #4b79e3;
-  color: rgb(18, 18, 18);
+  background: var(--accent);
+  color: #0f1117;
 }
 
 .status {
-  margin-top: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #4caf50;
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--success);
+  text-align: center;
 }
 
 .free {
@@ -55,5 +61,6 @@
 .free svg {
   height: 120%;
   width: 120%;
-  color: #3a5066;
+  color: var(--text-primary);
+  opacity: 0.7;
 }

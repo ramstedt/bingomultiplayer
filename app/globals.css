@@ -1,3 +1,47 @@
+:root {
+  /* backgrounds — deep navy matching logo */
+  --bg-base:    #0b0e1a;
+  --bg-surface: #111527;
+  --bg-raised:  #1a1f38;
+  --bg-input:   #151929;
+
+  /* borders */
+  --border:       #2a3060;
+  --border-focus: #2de8e0;
+
+  /* text */
+  --text-primary:   #eef0f8;
+  --text-secondary: #b8bdd8;
+  --text-muted:     #7a82aa;
+
+  /* accent — bright cyan from logo */
+  --accent:       #2de8e0;
+  --accent-hover: #1bcbc3;
+  --accent-dim:   #0d2e2d;
+
+  /* purple — secondary accent from logo */
+  --purple:       #c084fc;
+  --purple-hover: #a855f7;
+  --purple-dim:   #1a0d2e;
+
+  /* danger */
+  --danger:       #fc8181;
+  --danger-hover: #e53e3e;
+  --danger-dim:   #3b1111;
+
+  /* warning (close-to-bingo badge) */
+  --warning:      #f6c860;
+  --warning-dim:  #3d2e00;
+
+  /* success (bingo) */
+  --success:      #68d391;
+  --success-dim:  #1a3a25;
+
+  /* cell */
+  --cell-bg:      #1a1f38;
+  --cell-border:  #0b0e1a;
+}
+
 html {
   width: 100%;
   overflow-x: hidden;
@@ -5,16 +49,21 @@ html {
 
 body {
   width: 100%;
-  max-width: 500px;
+  min-height: 100dvh;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 auto;
-  background: rgb(36, 37, 38);
-  color: rgb(237, 237, 237);
-  padding: 1rem 0;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  padding: 1rem 0 0;
   box-sizing: border-box;
+}
+
+/* Constrain page content but let the footer break out to full width */
+body > *:not(footer) {
+  width: 100%;
+  max-width: 500px;
 }
 
 * {
@@ -24,15 +73,14 @@ body {
 }
 
 a {
-  color: inherit;
+  color: var(--accent);
   text-decoration: none;
-  background: rgb(18, 103, 199);
+  background: transparent;
 }
 
-h1,
-h2,
-h3 {
+h1, h2, h3 {
   text-align: center;
+  color: var(--text-primary);
 }
 
 .margin {
@@ -46,14 +94,25 @@ button {
 }
 
 input {
-  height: 2.5rem;
+  height: 2.75rem;
   max-width: 100%;
   width: 100%;
   padding: 0 0.75rem;
   font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background: #2e2f30;
-  color: rgb(237, 237, 237);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
   font-family: var(--font-rethinkSans);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input:focus {
+  border-color: var(--border-focus);
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
 }

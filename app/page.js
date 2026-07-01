@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import LinkButton from './components/_atoms/LinkButton/LinkButton';
 import styles from './page.module.css';
 import { useRouter } from 'next/navigation';
-import Kofi from './components/Kofi/Kofi';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -53,13 +53,72 @@ export default function Home() {
 
   return (
     <>
-      <h1>MultiPlayer Bingo</h1>
+      <div className={styles.hero}>
+        <Image
+          src='/chatbingo.png'
+          alt='Chat Bingo'
+          width={360}
+          height={360}
+          priority
+          className={styles.logo}
+        />
+        <p className={styles.tagline}>
+          Set up in minutes. Play live with your chat.
+        </p>
+      </div>
+
+      <section className={styles.about}>
+        <h1>Live bingo for Twitch streamers and their chat</h1>
+        <p>
+          Chat Bingo lets Twitch streamers create a shared bingo card for their
+          community. Fill it with inside jokes, stream moments, or anything that
+          fits your content — then share a code and let your chat play along
+          live.
+        </p>
+
+        <div className={styles.steps}>
+          <div className={styles.step}>
+            <span className={styles.stepNumber}>1</span>
+            <div>
+              <strong>Streamer creates a game</strong>
+              <p>
+                Add your bingo squares and share the 4-letter code with your
+                chat.
+              </p>
+            </div>
+          </div>
+          <div className={styles.step}>
+            <span className={styles.stepNumber}>2</span>
+            <div>
+              <strong>Chat joins with the code</strong>
+              <p>Everyone gets their own randomised bingo card.</p>
+            </div>
+          </div>
+          <div className={styles.step}>
+            <span className={styles.stepNumber}>3</span>
+            <div>
+              <strong>Play together in real time</strong>
+              <p>
+                Mark off squares as things happen on stream. First to bingo
+                wins!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {savedGame && (
         <div className={styles.rejoinBanner}>
-          <span>You were in game <strong>{savedGame.gameId}</strong></span>
+          <span>
+            You were in game <strong>{savedGame.gameId}</strong>
+          </span>
           <button
             className={styles.rejoinButton}
-            onClick={() => router.push(`/game?gameId=${savedGame.gameId}&playerId=${savedGame.playerId}`)}
+            onClick={() =>
+              router.push(
+                `/game?gameId=${savedGame.gameId}&playerId=${savedGame.playerId}`,
+              )
+            }
           >
             Rejoin
           </button>
@@ -75,36 +134,28 @@ export default function Home() {
           </button>
         </div>
       )}
-      <h3>Created by Catastasia</h3>
+
       <form className={styles.joinForm} onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor='name'>
-            <input
-              type='text'
-              id='name'
-              name='name'
-              placeholder='Enter your username'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              maxLength='10'
-              minLength='3'
-            />
-          </label>
-        </div>
-        <div>
-          <label htmlFor='code'>
-            <input
-              type='text'
-              id='code'
-              name='code'
-              placeholder='Enter game code'
-              value={gameId}
-              onChange={(e) => setGameId(e.target.value.toUpperCase())}
-              required
-            />
-          </label>
-        </div>
+        <input
+          type='text'
+          id='name'
+          name='name'
+          placeholder='Your username'
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          maxLength='10'
+          minLength='3'
+        />
+        <input
+          type='text'
+          id='code'
+          name='code'
+          placeholder='Game code'
+          value={gameId}
+          onChange={(e) => setGameId(e.target.value.toUpperCase())}
+          required
+        />
         <LinkButton
           isButton={true}
           buttonType='submit'
@@ -112,24 +163,11 @@ export default function Home() {
           onClick={handleSubmit}
           disabled={isLoading}
         />
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
       </form>
-      <br />
-      or
-      <br />
-      <br />
+
+      <p className={styles.or}>or</p>
       <LinkButton text='Create a game' href='/create' />
-      <div className='margin'>
-        <br />
-        <h2>How to play</h2>
-        <p>
-          Join a game by entering the code that was shared with you. You will
-          receive a bingo card with boxes in a randomised order. Fill in your
-          bingo card as you play. Once you have a bingo, you can announce it to
-          everyone!
-        </p>
-      </div>
-      <Kofi />
     </>
   );
 }

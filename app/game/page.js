@@ -30,7 +30,6 @@ import { db } from '@/lib/firebase';
 import BingoCard from '@/app/components/BingoCard/BingoCard';
 import Confetti from 'react-confetti';
 import { IoChevronForward, IoChevronDown } from 'react-icons/io5';
-import Kofi from '../components/Kofi/Kofi';
 import { IoCopy } from 'react-icons/io5';
 import { useRouter } from 'next/navigation';
 
@@ -298,7 +297,6 @@ function GameContent({
       ) : (
         <></>
       )}
-      <Kofi />
     </div>
   );
 }

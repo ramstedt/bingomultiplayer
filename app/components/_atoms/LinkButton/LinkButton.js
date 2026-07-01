@@ -9,12 +9,16 @@ export default function LinkButton({
   buttonType,
   onClick,
   disabled,
+  variant = 'primary',
 }) {
+  const wrapperClass = `${styles.wrapper} ${variant === 'secondary' ? styles.wrapperSecondary : ''}`;
+  const linkClass = `${styles.styledLink} ${variant === 'secondary' ? styles.styledLinkSecondary : ''}`;
+
   if (isButton) {
     return (
-      <div className={styles.wrapper}>
+      <div className={wrapperClass}>
         <button
-          className={styles.styledLink}
+          className={linkClass}
           type={buttonType}
           onClick={onClick}
           disabled={disabled}
@@ -25,8 +29,8 @@ export default function LinkButton({
     );
   } else {
     return (
-      <div className={styles.wrapper}>
-        <Link className={styles.styledLink} href={href}>
+      <div className={wrapperClass}>
+        <Link className={linkClass} href={href}>
           {text}
         </Link>
       </div>
